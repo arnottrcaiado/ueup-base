@@ -417,6 +417,11 @@ def modulo_match_vagas(df_skills):
         else:
             st.warning("Cole o texto da vaga primeiro.")
 
+#-------------------------------------------------------------------------------------
+def modulo_roadmap(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills):
+    st.subheader(f"💬 {UiConfig.SEC_ROADM}")
+    st.markdown("em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
+
 def modulo_chat_ia(cad, vibe):
     st.subheader(f"💬 {UiConfig.SEC_CHAT}")
     st.markdown("Converse com o Mentor IA. Ele conhece seu perfil e a vibe selecionada.")
@@ -785,15 +790,13 @@ def main():
         if show_chat:
             modulo_chat_ia(cad, vibe)
             st.divider()
-
-        if show_cv_gen:
-            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
+  
+        if show_roadmap:
+            modulo_roadmap(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
             st.divider()
         
-        # Bloco condicional para o Roadmap
-        if show_roadmap:
-            st.subheader("🗺️ Roadmaps (Mentoria)")
-            st.info("em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
+        if show_cv_gen:
+            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
             st.divider()
 
     else:
