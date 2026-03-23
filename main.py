@@ -628,7 +628,7 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
         return cad, df_form, df_compl, df_prod, df_comp, pd.DataFrame(), pd.DataFrame(), "PDF"
 
 def main():
-    # Caminho da sua logo (certifique-se de que o arquivo se chama logo_ueup.jpeg)
+    # Caminho da sua logo (certifique-se de que o ficheiro se chama logo_ueup.jpeg)
     LOGO_PATH = "logo_ueup.jpeg"
 
     # 1. Configuração da página com a Logo no ícone do separador (Favicon)
@@ -789,14 +789,15 @@ def main():
         if show_roadmap:
             st.subheader("🗺️ Roadmaps (Mentoria)")
             st.info("Funcionalidade em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
-            # Aqui poderá adicionar a chamada para a função que vai processar o Roadmap no futuro.
- 
+            st.divider()
+
         if show_cv_gen:
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
             st.divider()
             
     else:
         st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
+
 
 if __name__ == "__main__":
     main()
