@@ -107,12 +107,12 @@ ABREVIACOES_LATTES = {
 # ==============================================================================
 
 def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
-    """CSS Blindado 2.0: Perfurando o Shadow DOM do Streamlit para corrigir contrastes."""
+    """CSS Blindado 3.0: Templates visíveis na tela principal e injeção global segura."""
     temas = {
-        "Profissional/Sério": {"primary": "#005bb5", "bg_side": "#0e1117"},
-        "Entusiasta/Motivacional": {"primary": "#d32f2f", "bg_side": "#1a0b0b"},
-        "Acadêmico/Crítico": {"primary": "#006b3c", "bg_side": "#09140b"},
-        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg_side": "#120a1f"}
+        "Profissional/Sério": {"primary": "#005bb5", "bg_side": "#0e1117", "bg_main": "#f4f6f9"},
+        "Entusiasta/Motivacional": {"primary": "#d32f2f", "bg_side": "#1a0b0b", "bg_main": "#fff5f5"},
+        "Acadêmico/Crítico": {"primary": "#006b3c", "bg_side": "#09140b", "bg_main": "#f0f5f1"},
+        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg_side": "#120a1f", "bg_main": "#f9f5fa"}
     }
     
     humor_cores = {
@@ -127,8 +127,13 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
     
     st.markdown(f"""
         <style>
-        /* 1. BARRA LATERAL (Sidebar Escura e Borda de Humor) */
-        [data-testid="stSidebar"] {{ 
+        /* 1. TELA PRINCIPAL (Muda sutilmente com a Vibe) */
+        .stApp, [data-testid="stAppViewContainer"] {{
+            background-color: {t['bg_main']} !important;
+        }}
+
+        /* 2. BARRA LATERAL (Sidebar Escura e Borda de Humor) */
+        [data-testid="stSidebar"] > div:first-child, [data-testid="stSidebar"] {{ 
             background-color: {t['bg_side']} !important; 
             border-right: 4px solid {h_color} !important; 
         }}
@@ -145,34 +150,27 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
             color: #1e1e1e !important; 
         }}
 
-        /* =======================================================
-           2. FILE UPLOADER (SOLUÇÃO DEFINITIVA DO CONTRASTE)
-           ======================================================= */
-        /* Ataca o fundo da caixa tracejada (Dropzone) */
+        /* 3. FILE UPLOADER (Contraste Perfeito) */
         div[data-testid="stFileUploader"] section,
         [data-testid="stFileUploadDropzone"] {{ 
             background-color: #1e1e24 !important; 
             border: 2px dashed {t['primary']} !important; 
             border-radius: 8px !important; 
         }}
-        /* Força os textos lá dentro (Drag and drop files...) para branco */
         div[data-testid="stFileUploader"] section *,
-        [data-testid="stFileUploadDropzone"] * {{ 
-            color: #ffffff !important; 
-        }}
-        /* Pinta o Botão "Browse files" */
+        [data-testid="stFileUploadDropzone"] * {{ color: #ffffff !important; }}
+        
         div[data-testid="stFileUploader"] button,
         [data-testid="stFileUploadDropzone"] button {{ 
             background-color: {t['primary']} !important; 
             border: 1px solid {t['primary']} !important; 
         }}
-        /* Perfora a camada interna para pintar as letras do Botão */
         div[data-testid="stFileUploader"] button *,
         [data-testid="stFileUploadDropzone"] button * {{ 
             color: #ffffff !important; 
             font-weight: 800 !important; 
         }}
-        /* Clareia e ajeita o arquivo DEPOIS que você faz o upload (A caixa com o "X") */
+        
         div[data-testid="stFileUploader"] [data-testid="stUploadedFile"],
         [data-testid="stUploadedFile"] {{ 
             background-color: #2b2b36 !important; 
@@ -180,20 +178,14 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
             border-radius: 6px !important; 
         }}
         div[data-testid="stFileUploader"] [data-testid="stUploadedFile"] *,
-        [data-testid="stUploadedFile"] * {{ 
-            color: #ffffff !important; 
-        }}
+        [data-testid="stUploadedFile"] * {{ color: #ffffff !important; }}
 
-        /* =======================================================
-           3. TELA PRINCIPAL (Destaques e Botões)
-           ======================================================= */
+        /* 4. DESTAQUES E BOTÕES NA TELA PRINCIPAL */
         header[data-testid="stHeader"] {{ 
             border-bottom: 4px solid {h_color} !important; 
             background-color: transparent !important; 
         }}
-        .main h1, .main h2, .main h3 {{ 
-            color: {t['primary']} !important; 
-        }}
+        .main h1, .main h2, .main h3 {{ color: {t['primary']} !important; }}
         .main .stButton>button {{ 
             border: 2px solid {t['primary']} !important; 
             color: {t['primary']} !important; 
@@ -206,7 +198,7 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
         }}
         </style>
     """, unsafe_allow_html=True)
-
+    
     return h_color
 
 def limpar_texto(texto: str) -> str:
@@ -773,13 +765,11 @@ def main() -> None:
     """Função Mestra: Inicializa layout, captura inputs e orquestra os módulos de UI."""
     LOGO_PATH = "logo_ueup.jpeg"
 
-    # Configuração Inicial da Página
     try:
         st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=LOGO_PATH)
     except Exception:
         st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=UiConfig.PAGE_ICON)
     
-    # Cabeçalho Principal
     col_logo, col_title = st.columns([1, 10])
     with col_logo:
         try:
@@ -789,7 +779,6 @@ def main() -> None:
     with col_title:
         st.title(UiConfig.HEADER_TITLE)
 
-    # Configuração do Menu Lateral (Sidebar)
     with st.sidebar:
         try:
             st.image(LOGO_PATH, use_container_width=True)
@@ -803,7 +792,6 @@ def main() -> None:
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
         
-        # Mapeamentos de Estado (Humor e Vibe)
         opcoes_humor_usuario = {
             "🚀 Motivado e focado": "motivado",
             "🤔 Reflexivo, buscando clareza": "reflexivo",
@@ -823,9 +811,6 @@ def main() -> None:
         vibe_selecionada = st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()))
         vibe_estado = opcoes_vibe[vibe_selecionada]
         
-        # Chamada do construtor de CSS Seguro
-        h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
-        
         st.divider()
         st.header("📌 Visualização de Dados")
         show_home = st.checkbox(UiConfig.SEC_HOME, value=True)
@@ -841,6 +826,9 @@ def main() -> None:
         show_chat = st.checkbox(UiConfig.SEC_CHAT, value=False)
         show_roadmap = st.checkbox(UiConfig.SEC_ROADMAP, value=False)
         show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False)
+       
+    # 🚀 FIX: Chamada do estilo AGORA FORA DA SIDEBAR para garantir a renderização global
+    h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
 
     # Linha Dinâmica Reativa ao Humor abaixo do título
     st.markdown(f"<div style='height: 5px; width: 100%; background-color: {h_color}; border-radius: 5px; margin-top: -15px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
@@ -859,7 +847,6 @@ def main() -> None:
         c2.caption(f"Fonte: {msg}")
         st.divider()
 
-        # Chamadas Estruturadas (Clean Code)
         if show_home:
             modulo_ficha_cadastral(cad)
             st.divider()
@@ -892,14 +879,14 @@ def main() -> None:
             modulo_chat_ia(cad, vibe_estado)
             st.divider()
             
-        if show_cv_gen:
-            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
-            st.divider()
-            
         if show_roadmap:
             modulo_roadmap()
             st.divider()
 
+        if show_cv_gen:
+            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
+            st.divider()
+            
     else:
         st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
 
