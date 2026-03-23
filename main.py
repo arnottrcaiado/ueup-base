@@ -798,6 +798,5 @@ def main():
     else:
         st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
 
-
 if __name__ == "__main__":
     main()
