@@ -784,17 +784,17 @@ def main():
         if show_chat:
             modulo_chat_ia(cad, vibe)
             st.divider()
-            
+
+        if show_cv_gen:
+            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
+            st.divider()
+        
         # Bloco condicional para o Roadmap
         if show_roadmap:
             st.subheader("🗺️ Roadmaps (Mentoria)")
             st.info("Funcionalidade em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
             st.divider()
 
-        if show_cv_gen:
-            gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
-            st.divider()
-            
     else:
         st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
 
