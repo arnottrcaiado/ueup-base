@@ -628,10 +628,34 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
         return cad, df_form, df_compl, df_prod, df_comp, pd.DataFrame(), pd.DataFrame(), "PDF"
 
 def main():
-    st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=UiConfig.PAGE_ICON)
-    st.title(UiConfig.HEADER_TITLE)
+    # Caminho da sua logo (certifique-se de que o ficheiro se chama logo_ueup.jpeg)
+    LOGO_PATH = "logo_ueup.jpeg"
+
+    # 1. Configuração da página com a Logo no ícone do separador (Favicon)
+    try:
+        st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=LOGO_PATH)
+    except Exception:
+        # Fallback caso a imagem não seja encontrada de imediato
+        st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=UiConfig.PAGE_ICON)
+    
+    # 2. Cabeçalho Principal Orgânico (Logo + Título lado a lado)
+    col_logo, col_title = st.columns([1, 10])
+    with col_logo:
+        try:
+            st.image(LOGO_PATH, width=70) # Tamanho alinhado ao lado do título
+        except Exception:
+            st.markdown(f"<h1>{UiConfig.PAGE_ICON}</h1>", unsafe_allow_html=True) # Fallback
+            
+    with col_title:
+        st.title(UiConfig.HEADER_TITLE)
 
     with st.sidebar:
+        # 3. Barra Lateral (Sidebar) com destaque da marca no topo
+        try:
+            st.image(LOGO_PATH, use_container_width=True)
+        except Exception:
+            pass
+            
         st.header(UiConfig.SIDEBAR_TITLE_1)
         arquivo = st.file_uploader("Carregar XML ou PDF", type=['xml', 'pdf'])
         ano_inicio = st.number_input("Ano Inicial (Corte)", min_value=1970, max_value=datetime.now().year + 1, value=2018)
@@ -657,7 +681,7 @@ def main():
         show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False)
 
     if arquivo:
-        with st.spinner("Processando Inteligência de Dados..."):
+        with st.spinner("A processar Inteligência de Dados..."):
             dados = carregar_dados_cacheado(arquivo)
             if dados[0] is None:
                 st.error(dados[-1]); st.stop()
@@ -668,7 +692,7 @@ def main():
         c2.caption(f"Fonte: {msg}")
         st.divider()
 
-        # Renderização condicional baseada nos checkboxes originais da barra lateral
+        # Renderização condicional baseada nos checkboxes da barra lateral
         if show_home:
             st.subheader(f"👤 {UiConfig.SEC_HOME}")
             with st.container(border=True):
@@ -743,7 +767,7 @@ def main():
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
             
     else:
-        st.info("👈 Utilize a barra lateral para carregar seu Currículo Lattes (XML ou PDF).")
+        st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
 
 if __name__ == "__main__":
     main()
