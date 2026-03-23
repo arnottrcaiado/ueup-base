@@ -628,7 +628,7 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
         return cad, df_form, df_compl, df_prod, df_comp, pd.DataFrame(), pd.DataFrame(), "PDF"
 
 def main():
-    # Caminho da sua logo (certifique-se de que o ficheiro se chama logo_ueup.jpeg)
+    # Caminho da sua logo (certifique-se de que o arquivo se chama logo_ueup.jpeg)
     LOGO_PATH = "logo_ueup.jpeg"
 
     # 1. Configuração da página com a Logo no ícone do separador (Favicon)
@@ -662,7 +662,27 @@ def main():
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
-        vibe = st.selectbox("Personalidade da IA:", ["Profissional/Sério", "Entusiasta/Motivacional", "Acadêmico/Crítico", "Divertido/Descontraído"])
+        
+        # --- NOVA OPÇÃO: Interação com o Humor do Utilizador ---
+        opcoes_humor_usuario = {
+            "🚀 Motivado e focado": "motivado",
+            "🤔 Reflexivo, buscando clareza": "reflexivo",
+            "🤯 Sobrecarregado, preciso de direção": "sobrecarregado",
+            "😴 Cansado, prefiro algo direto e prático": "cansado"
+        }
+        humor_selecionado = st.selectbox("Como se sente hoje?", list(opcoes_humor_usuario.keys()))
+        # Guardamos a variável na sessão para que a IA (Chat/Roadmap) possa usá-la mais tarde
+        st.session_state['humor_usuario'] = opcoes_humor_usuario[humor_selecionado]
+        
+        # --- OPÇÃO EXISTENTE: Personalidade da IA ---
+        opcoes_vibe = {
+            "👔 Profissional/Sério": "Profissional/Sério",
+            "🔥 Entusiasta/Motivacional": "Entusiasta/Motivacional",
+            "🧐 Acadêmico/Crítico": "Acadêmico/Crítico",
+            "😎 Divertido/Descontraído": "Divertido/Descontraído"
+        }
+        vibe_selecionada = st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()))
+        vibe = opcoes_vibe[vibe_selecionada]
         aplicar_estilo_dinamico(vibe)
         
         st.divider()
@@ -679,9 +699,11 @@ def main():
         show_match = st.checkbox(UiConfig.SEC_MATCH, value=False)
         show_chat = st.checkbox(UiConfig.SEC_CHAT, value=False)
         show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False)
+        # Opção para o Roadmap
+        show_roadmap = st.checkbox("Gerar Roadmaps (Mentoria)", value=False)
 
     if arquivo:
-        with st.spinner("A processar Inteligência de Dados..."):
+        with st.spinner("Trabalhando -> Inteligência de Dados..."):
             dados = carregar_dados_cacheado(arquivo)
             if dados[0] is None:
                 st.error(dados[-1]); st.stop()
@@ -765,6 +787,13 @@ def main():
 
         if show_cv_gen:
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
+            st.divider()
+            
+        # Bloco condicional para o Roadmap
+        if show_roadmap:
+            st.subheader("🗺️ Roadmaps (Mentoria)")
+            st.info("Funcionalidade em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
+            # Aqui poderá adicionar a chamada para a função que vai processar o Roadmap no futuro.
             
     else:
         st.info("👈 Utilize a barra lateral para carregar o seu Currículo Lattes (XML ou PDF).")
