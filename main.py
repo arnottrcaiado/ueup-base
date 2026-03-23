@@ -16,7 +16,7 @@ class UiConfig:
     PAGE_TITLE = "ueUP AI - Lattes & Carreira"
     PAGE_ICON = "🚀"
     LAYOUT = "wide"
-    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Career Match"
+    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Mentoria de Carreira"
     SIDEBAR_TITLE_1 = "1. Entrada de Dados"
     SIDEBAR_TITLE_2 = "2. Configuração de Mentoria"
     
@@ -26,7 +26,7 @@ class UiConfig:
     SEC_PROD = "Tabela de Produção"
     SEC_SKILLS = "Inteligência de Skills"
     SEC_IKIGAI = "Mentoria Ikigai (Propósito)"
-    SEC_MATCH = "Match de Vagas (IA)"
+    SEC_MATCH = "Mentoria de Vagas (IA)"
     SEC_CHAT = "Chat Mentor IA"
     SEC_CV_GEN = "Gerador de Currículo TI (Expert)"
     SEC_ROADMAP = "Roadmaps (Mentoria)"
