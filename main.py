@@ -234,4 +234,4 @@ def main():
         st.warning("Arraste seu arquivo Lattes para o menu lateral para iniciar a análise.")
 
 if __name__ == "__main__":
-    main()main()
+    main()
