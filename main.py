@@ -29,6 +29,7 @@ class UiConfig:
     SEC_IKIGAI = "Mentoria Ikigai (Propósito)"
     SEC_MATCH = "Match de Vagas (IA)"
     SEC_CHAT = "Chat Mentor IA"
+    SEC_ROADM = "Roadmap Gen IA"
     SEC_CV_GEN = "Gerador de Currículo TI (Expert)"
 
 class XmlTags:
@@ -700,7 +701,7 @@ def main():
         show_chat = st.checkbox(UiConfig.SEC_CHAT, value=False)
         show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False)
         # Opção para o Roadmap
-        show_roadmap = st.checkbox("Gerar Roadmaps (Mentoria)", value=False)
+        show_roadmap = st.checkbox(UiConfig.SEC_ROADM, value=False)
 
     if arquivo:
         with st.spinner("Trabalhando -> Inteligência de Dados..."):
@@ -792,7 +793,7 @@ def main():
         # Bloco condicional para o Roadmap
         if show_roadmap:
             st.subheader("🗺️ Roadmaps (Mentoria)")
-            st.info("Funcionalidade em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
+            st.info("em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
             st.divider()
 
     else:
