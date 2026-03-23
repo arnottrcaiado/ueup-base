@@ -16,7 +16,7 @@ class UiConfig:
     PAGE_TITLE = "ueUP AI - Lattes & Carreira"
     PAGE_ICON = "🚀"
     LAYOUT = "wide"
-    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Career Match"
+    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Mentoria de Carreira"
     SIDEBAR_TITLE_1 = "1. Entrada de Dados"
     SIDEBAR_TITLE_2 = "2. Configuração de Mentoria"
     
