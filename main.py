@@ -476,7 +476,17 @@ def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
     st.subheader(f"📄 {UiConfig.SEC_CV_GEN}")
     st.markdown("> **Mentoria de Carreira:** Edite as seções abaixo para gerar seu CV otimizado.")
-    selecoes = {'form': [], 'compl': [], 'tech': [], 'soft': [], 'lang': [], 'jobs': [], 'projs': []}
+    
+    # CORREÇÃO CIRÚRGICA: Inicializando dicionário com DataFrames vazios para evitar erro .empty
+    selecoes = {
+        'form': pd.DataFrame(), 
+        'compl': pd.DataFrame(), 
+        'tech': [], 
+        'soft': [], 
+        'lang': [], 
+        'jobs': pd.DataFrame(), 
+        'projs': pd.DataFrame()
+    }
 
     tabs = st.tabs(["1. Cabeçalho & Resumo", "2. Experiência", "3. Projetos", "4. Skills & Idiomas", "5. Educação"])
     
