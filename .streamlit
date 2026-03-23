@@ -1,7 +1,0 @@
-[theme]
-base="dark"
-primaryColor="#00E5FF" # Azul Ciano Elétrico
-backgroundColor="#0e1117"
-secondaryBackgroundColor="#1e1e24"
-textColor="#fafafa"
-font="sans serif"

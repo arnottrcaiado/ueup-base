@@ -9,18 +9,17 @@ from typing import Dict, List, Tuple, Any, Optional
 import graphviz
 
 # ==============================================================================
-# 1. CONSTANTES E CONFIGURAÇÕES GERAIS (MANTIDAS E EXPANDIDAS)
+# 1. CONSTANTES E CONFIGURAÇÕES GERAIS
 # ==============================================================================
 
 class UiConfig:
     PAGE_TITLE = "ueUP AI - Lattes & Carreira"
     PAGE_ICON = "🚀"
     LAYOUT = "wide"
-    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Mentoria de Carreira"
+    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Career Match"
     SIDEBAR_TITLE_1 = "1. Entrada de Dados"
     SIDEBAR_TITLE_2 = "2. Configuração de Mentoria"
     
-    # Nomes das Seções (Checkboxes originais + Novas)
     SEC_HOME = "Ficha Cadastral"
     SEC_EDU = "Formação Acadêmica"
     SEC_DASH = "Dashboard & Analytics"
@@ -29,8 +28,8 @@ class UiConfig:
     SEC_IKIGAI = "Mentoria Ikigai (Propósito)"
     SEC_MATCH = "Match de Vagas (IA)"
     SEC_CHAT = "Chat Mentor IA"
-    SEC_ROADM = "Roadmap Gen IA"
     SEC_CV_GEN = "Gerador de Currículo TI (Expert)"
+    SEC_ROADMAP = "Roadmaps (Mentoria)"
 
 class XmlTags:
     ROOT_ID = 'NUMERO-IDENTIFICADOR'
@@ -104,25 +103,111 @@ ABREVIACOES_LATTES = {
 }
 
 # ==============================================================================
-# 2. FUNÇÕES DE UX DINÂMICA (NOVAS) E UTILITÁRIAS ORIGINAIS
+# 2. FUNÇÕES DE UX DINÂMICA E CORES (BLINDADAS)
 # ==============================================================================
 
-def aplicar_estilo_dinamico(vibe):
+def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
+    """CSS Blindado 2.0: Perfurando o Shadow DOM do Streamlit para corrigir contrastes."""
     temas = {
-        "Profissional/Sério": {"primary": "#004080", "bg": "#f0f2f6", "text": "#1a1a1a"},
-        "Entusiasta/Motivacional": {"primary": "#ff4b4b", "bg": "#fff5f5", "text": "#333333"},
-        "Acadêmico/Crítico": {"primary": "#2e7d32", "bg": "#f1f8e9", "text": "#212121"},
-        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg": "#f3e5f5", "text": "#000000"}
+        "Profissional/Sério": {"primary": "#005bb5", "bg_side": "#0e1117"},
+        "Entusiasta/Motivacional": {"primary": "#d32f2f", "bg_side": "#1a0b0b"},
+        "Acadêmico/Crítico": {"primary": "#006b3c", "bg_side": "#09140b"},
+        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg_side": "#120a1f"}
     }
+    
+    humor_cores = {
+        "motivado": "#FFD700",
+        "reflexivo": "#00E5FF",
+        "sobrecarregado": "#FF5252",
+        "cansado": "#9E9E9E"
+    }
+    
     t = temas.get(vibe, temas["Profissional/Sério"])
+    h_color = humor_cores.get(humor, "#005bb5")
+    
     st.markdown(f"""
         <style>
-        .stApp {{ background-color: {t['bg']}; color: {t['text']}; }}
-        h1, h2, h3 {{ color: {t['primary']} !important; }}
-        .stButton>button {{ border-radius: 8px; border: 2px solid {t['primary']}; color: {t['primary']}; }}
-        .stSidebar {{ background-color: #ffffff; border-right: 1px solid #ddd; }}
+        /* 1. BARRA LATERAL (Sidebar Escura e Borda de Humor) */
+        [data-testid="stSidebar"] {{ 
+            background-color: {t['bg_side']} !important; 
+            border-right: 4px solid {h_color} !important; 
+        }}
+        [data-testid="stSidebar"] p, 
+        [data-testid="stSidebar"] span, 
+        [data-testid="stSidebar"] label, 
+        [data-testid="stSidebar"] h1, 
+        [data-testid="stSidebar"] h2, 
+        [data-testid="stSidebar"] h3 {{ 
+            color: #ffffff !important; 
+        }}
+        /* Preserva os textos pretos dentro das caixas de seleção (selectbox) */
+        div[data-baseweb="select"] span {{ 
+            color: #1e1e1e !important; 
+        }}
+
+        /* =======================================================
+           2. FILE UPLOADER (SOLUÇÃO DEFINITIVA DO CONTRASTE)
+           ======================================================= */
+        /* Ataca o fundo da caixa tracejada (Dropzone) */
+        div[data-testid="stFileUploader"] section,
+        [data-testid="stFileUploadDropzone"] {{ 
+            background-color: #1e1e24 !important; 
+            border: 2px dashed {t['primary']} !important; 
+            border-radius: 8px !important; 
+        }}
+        /* Força os textos lá dentro (Drag and drop files...) para branco */
+        div[data-testid="stFileUploader"] section *,
+        [data-testid="stFileUploadDropzone"] * {{ 
+            color: #ffffff !important; 
+        }}
+        /* Pinta o Botão "Browse files" */
+        div[data-testid="stFileUploader"] button,
+        [data-testid="stFileUploadDropzone"] button {{ 
+            background-color: {t['primary']} !important; 
+            border: 1px solid {t['primary']} !important; 
+        }}
+        /* Perfora a camada interna para pintar as letras do Botão */
+        div[data-testid="stFileUploader"] button *,
+        [data-testid="stFileUploadDropzone"] button * {{ 
+            color: #ffffff !important; 
+            font-weight: 800 !important; 
+        }}
+        /* Clareia e ajeita o arquivo DEPOIS que você faz o upload (A caixa com o "X") */
+        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"],
+        [data-testid="stUploadedFile"] {{ 
+            background-color: #2b2b36 !important; 
+            border: 1px solid #444 !important;
+            border-radius: 6px !important; 
+        }}
+        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"] *,
+        [data-testid="stUploadedFile"] * {{ 
+            color: #ffffff !important; 
+        }}
+
+        /* =======================================================
+           3. TELA PRINCIPAL (Destaques e Botões)
+           ======================================================= */
+        header[data-testid="stHeader"] {{ 
+            border-bottom: 4px solid {h_color} !important; 
+            background-color: transparent !important; 
+        }}
+        .main h1, .main h2, .main h3 {{ 
+            color: {t['primary']} !important; 
+        }}
+        .main .stButton>button {{ 
+            border: 2px solid {t['primary']} !important; 
+            color: {t['primary']} !important; 
+            background-color: transparent !important; 
+            font-weight: bold; 
+        }}
+        .main .stButton>button:hover {{ 
+            background-color: {t['primary']} !important; 
+            color: #ffffff !important; 
+        }}
         </style>
     """, unsafe_allow_html=True)
+
+    return h_color
 
 def limpar_texto(texto: str) -> str:
     if not texto: return ""
@@ -369,10 +454,93 @@ def processar_pdf_fallback(arquivo_bytes: Any) -> Tuple[Dict[str, str], pd.DataF
     return dados_cadastrais, df_form, df_compl, pd.DataFrame(lista_prod), pd.DataFrame(lista_comp_temp)
 
 # ==============================================================================
-# 4. NOVOS MÓDULOS (IKIGAI, MATCH, IA)
+# 4. MÓDULOS DE INTERFACE E VISUALIZAÇÃO (REFATORAÇÃO CLEAN CODE)
 # ==============================================================================
 
-def modulo_ikigai(df_skills):
+def modulo_ficha_cadastral(cad: Dict[str, str]) -> None:
+    """Renderiza a Ficha Cadastral extraída."""
+    st.subheader(f"👤 {UiConfig.SEC_HOME}")
+    with st.container(border=True):
+        col_avatar, col_info = st.columns([1, 5])
+        with col_avatar: st.markdown("# 🎓")
+        with col_info:
+            st.markdown(f"### {cad.get('NOME COMPLETO')}")
+            st.markdown(f"**ID LATTES:** {cad.get('ID LATTES')}")
+            st.caption(f"Última atualização: {cad.get('DATA ATUALIZAÇÃO')}")
+        st.divider()
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            st.markdown("###### 🪪 Documentos")
+            st.markdown(f"**CPF:** {cad.get('CPF')}\n**RG:** {cad.get('RG')}\n**ORCID:** {cad.get('ORCID')}")
+        with c2:
+            st.markdown("###### 🧬 Pessoal")
+            st.markdown(f"**Nascimento:** {cad.get('DATA NASCIMENTO')}\n**Sexo:** {cad.get('SEXO')}\n**Raça:** {cad.get('COR/RAÇA')}")
+        with c3:
+            st.markdown("###### 🌍 Origem")
+            st.markdown(f"**Nacionalidade:** {cad.get('NACIONALIDADE')}\n**País:** {cad.get('PAÍS NASCIMENTO')}\n**Local:** {cad.get('CIDADE/UF')}")
+        with c4:
+            st.markdown("###### 👪 Filiação")
+            st.markdown(f"{cad.get('FILIAÇÃO')}")
+        st.markdown("---")
+        st.markdown("###### 📝 Resumo Biográfico")
+        st.write(cad.get('RESUMO'))
+
+def modulo_formacao(df_form: pd.DataFrame, df_compl: pd.DataFrame) -> None:
+    """Renderiza os dataframes de Formação Acadêmica e Complementar."""
+    st.subheader(f"🎓 {UiConfig.SEC_EDU}")
+    c1, c2 = st.columns(2)
+    with c1: 
+        st.markdown("**Acadêmica**")
+        if not df_form.empty: st.dataframe(df_form, use_container_width=True, hide_index=True)
+    with c2: 
+        st.markdown("**Complementar**")
+        if not df_compl.empty: st.dataframe(df_compl, use_container_width=True, hide_index=True)
+
+def modulo_dashboard(df_prod: pd.DataFrame, ano_inicio: int) -> None:
+    """Renderiza gráficos de Produção."""
+    st.subheader(f"📊 {UiConfig.SEC_DASH}")
+    if not df_prod.empty:
+        df_filtro = df_prod[df_prod['Ano'] >= ano_inicio]
+        k1, k2 = st.columns(2)
+        with k1: 
+            fig_bar = px.bar(df_filtro.groupby(['Ano', 'Macro Categoria']).size().reset_index(name='Q'), x='Ano', y='Q', color='Macro Categoria')
+            st.plotly_chart(fig_bar, use_container_width=True)
+        with k2: 
+            fig_sun = px.sunburst(df_filtro, path=['Macro Categoria', 'Tipo'])
+            st.plotly_chart(fig_sun, use_container_width=True)
+
+def modulo_tabela_producao(df_prod: pd.DataFrame) -> None:
+    """Renderiza a tabela completa de produção."""
+    st.subheader("📚 Tabela Produção")
+    st.dataframe(df_prod, use_container_width=True)
+
+def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
+    """Renderiza os gráficos de competências (Heatmap e Radar)."""
+    st_obj.subheader(f"🧠 {UiConfig.SEC_SKILLS}")
+    if df_comp.empty:
+        st_obj.info("Competências não identificadas no arquivo.")
+        return
+    options_list = sorted(df_comp['Tipo'].unique())
+    selected_types = st_obj.multiselect("Filtrar Área de Competência:", options=options_list, default=options_list)
+    df_filtered = df_comp[df_comp['Tipo'].isin(selected_types)].copy()
+    df_cleaned = df_filtered[df_filtered['Ano'] > 0].drop_duplicates()
+    if df_cleaned.empty:
+        st_obj.warning("Sem dados válidos para o filtro selecionado.")
+        return
+    col_heatmap, col_radar = st_obj.columns([2, 1])
+    with col_heatmap:
+        df_heatmap = df_cleaned.groupby(['Ano', 'Tipo']).size().reset_index(name='V')
+        fig_heatmap = px.density_heatmap(df_heatmap, x='Ano', y='Tipo', z='V', title="Skills por Ano", color_continuous_scale='Magma')
+        st_obj.plotly_chart(fig_heatmap, use_container_width=True)
+    with col_radar:
+        df_radar = df_cleaned['Tipo'].value_counts().reset_index(name='Q')
+        df_radar.columns = ['Tipo', 'Q']
+        fig_radar = px.line_polar(df_radar, r='Q', theta='Tipo', line_close=True, title="Radar de Perfil")
+        st_obj.plotly_chart(fig_radar, use_container_width=True)
+    st_obj.dataframe(df_cleaned, use_container_width=True, hide_index=True)
+
+def modulo_ikigai(df_skills: pd.DataFrame) -> None:
+    """Renderiza o construtor interativo do Ikigai."""
     st.subheader(f"🎡 {UiConfig.SEC_IKIGAI}")
     st.markdown("O Ikigai ajuda a cruzar suas habilidades Lattes com seu propósito de vida e mercado.")
     col1, col2 = st.columns([1, 1])
@@ -400,29 +568,23 @@ def modulo_ikigai(df_skills):
         dot.edge('A', 'I'); dot.edge('B', 'I'); dot.edge('C', 'I'); dot.edge('D', 'I')
         st.graphviz_chart(dot)
 
-def modulo_match_vagas(df_skills):
+def modulo_match_vagas(df_skills: pd.DataFrame) -> None:
+    """Renderiza simulador de Análise de Vagas."""
     st.subheader(f"🎯 {UiConfig.SEC_MATCH}")
     st.markdown("Analise se o seu perfil extraído do Lattes está aderente a uma vaga de mercado.")
     vaga_text = st.text_area("Cole a descrição da vaga alvo (Job Description):", height=150)
-    
     if st.button("Analisar Aderência"):
         if vaga_text:
             st.metric("Score de Aderência", "82%", "+15% (Bom fit)")
             st.progress(0.82)
             c1, c2 = st.columns(2)
-            with c1:
-                st.success("**Gaps Positivos (Pontos Fortes):**\n- Sólida experiência em pesquisa e ensino.\n- Forte base analítica identificada nas skills.")
-            with c2:
-                st.warning("**Gaps de Habilidade (A Desenvolver):**\n- A vaga pede ferramentas Cloud (AWS/Azure) não explícitas no Lattes.\n- Experiência comercial pode precisar de maior destaque.")
+            with c1: st.success("**Gaps Positivos (Pontos Fortes):**\n- Sólida experiência em pesquisa e ensino.\n- Forte base analítica identificada nas skills.")
+            with c2: st.warning("**Gaps de Habilidade (A Desenvolver):**\n- A vaga pede ferramentas Cloud (AWS/Azure) não explícitas no Lattes.\n- Experiência comercial pode precisar de maior destaque.")
         else:
             st.warning("Cole o texto da vaga primeiro.")
 
-#-------------------------------------------------------------------------------------
-def modulo_roadmap(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills):
-    st.subheader(f"💬 {UiConfig.SEC_ROADM}")
-    st.markdown("em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
-
-def modulo_chat_ia(cad, vibe):
+def modulo_chat_ia(cad: Dict[str, str], vibe: str) -> None:
+    """Renderiza a interface do Mentor de Inteligência Artificial."""
     st.subheader(f"💬 {UiConfig.SEC_CHAT}")
     st.markdown("Converse com o Mentor IA. Ele conhece seu perfil e a vibe selecionada.")
     
@@ -435,10 +597,8 @@ def modulo_chat_ia(cad, vibe):
 
     if prompt := st.chat_input(f"Como posso ajudar com sua carreira, {cad.get('NOME COMPLETO').split()[0]}?"):
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        with st.chat_message("user"): st.markdown(prompt)
 
-        # Simulação de Resposta IA baseada na "Vibe"
         toms = {
             "Profissional/Sério": f"Analisando seu resumo ({cad.get('RESUMO')[:50]}...), recomendo uma abordagem estratégica.",
             "Entusiasta/Motivacional": f"Incrível! Com sua trajetória, {prompt} é totalmente possível. Vamos pra cima!",
@@ -447,43 +607,18 @@ def modulo_chat_ia(cad, vibe):
         }
         res = toms.get(vibe, "Resposta padrão do sistema.")
         st.session_state.messages.append({"role": "assistant", "content": res})
-        with st.chat_message("assistant"):
-            st.markdown(res)
+        with st.chat_message("assistant"): st.markdown(res)
 
-# ==============================================================================
-# 5. VISUALIZAÇÕES E GERADOR DE CV (ORIGINAIS MELHORADOS)
-# ==============================================================================
-
-def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
-    st_obj.subheader(f"🧠 {UiConfig.SEC_SKILLS}")
-    if df_comp.empty:
-        st_obj.info("Competências não identificadas no arquivo.")
-        return
-    options_list = sorted(df_comp['Tipo'].unique())
-    selected_types = st_obj.multiselect("Filtrar Área de Competência:", options=options_list, default=options_list)
-    df_filtered = df_comp[df_comp['Tipo'].isin(selected_types)].copy()
-    df_cleaned = df_filtered[df_filtered['Ano'] > 0]
-    df_cleaned = df_cleaned.drop_duplicates()
-    if df_cleaned.empty:
-        st_obj.warning("Sem dados válidos para o filtro selecionado.")
-        return
-    col_heatmap, col_radar = st_obj.columns([2, 1])
-    with col_heatmap:
-        df_heatmap = df_cleaned.groupby(['Ano', 'Tipo']).size().reset_index(name='V')
-        fig_heatmap = px.density_heatmap(df_heatmap, x='Ano', y='Tipo', z='V', title="Skills por Ano", color_continuous_scale='Magma')
-        st_obj.plotly_chart(fig_heatmap, use_container_width=True)
-    with col_radar:
-        df_radar = df_cleaned['Tipo'].value_counts().reset_index(name='Q')
-        df_radar.columns = ['Tipo', 'Q']
-        fig_radar = px.line_polar(df_radar, r='Q', theta='Tipo', line_close=True, title="Radar de Perfil", template="plotly_dark")
-        st_obj.plotly_chart(fig_radar, use_container_width=True)
-    st_obj.dataframe(df_cleaned, use_container_width=True, hide_index=True)
+def modulo_roadmap() -> None:
+    """Renderiza a funcionalidade futura de caminhos de carreira."""
+    st.subheader(f"🗺️ {UiConfig.SEC_ROADMAP}")
+    st.info("Funcionalidade em desenvolvimento: Em breve, aqui visualizará o seu caminho de carreira gerado pela inteligência ueUP.")
 
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
+    """Gera, edita e exporta o currículo dinamicamente."""
     st.subheader(f"📄 {UiConfig.SEC_CV_GEN}")
     st.markdown("> **Mentoria de Carreira:** Edite as seções abaixo para gerar seu CV otimizado.")
     
-    # CORREÇÃO CIRÚRGICA: Inicializando dicionário com DataFrames vazios para evitar erro .empty
     selecoes = {
         'form': pd.DataFrame(), 
         'compl': pd.DataFrame(), 
@@ -507,7 +642,6 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
         portf = c_port.text_input("Portfólio / Github", "github.com/voce")
         st.divider()
         st.markdown("#### Resumo Profissional")
-        # INTEGRAÇÃO IKIGAI: Busca o resumo da IA se existir, senão usa o Lattes
         resumo_padrao = st.session_state.get('resumo_ikigai', cad.get('RESUMO', ''))[:1000]
         resumo_final = st.text_area("Texto do Resumo", value=resumo_padrao, height=200)
 
@@ -612,11 +746,12 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
         st.info("Copie ou baixe o Markdown para ferramentas como Obsidian ou conversores PDF.")
 
 # ==============================================================================
-# 6. CACHE E LÓGICA PRINCIPAL (MAIN)
+# 5. CACHE DE DADOS E FUNÇÃO PRINCIPAL (MAIN)
 # ==============================================================================
 
 @st.cache_data(show_spinner=False)
 def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, str]], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], str]:
+    """Processa o upload do XML ou PDF com armazenamento em cache de alta performance."""
     if arquivo_carregado.name.endswith('.xml'):
         try:
             tree = ET.parse(arquivo_carregado)
@@ -628,35 +763,34 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
             df_atuacao = extrair_atuacao_profissional_detalhada(root)
             df_projetos = extrair_projetos_detalhados(root)
             return cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos, "XML Lattes"
-        except Exception as e: return None, None, None, None, None, None, None, f"Erro XML: {e}"
+        except Exception as e: 
+            return None, None, None, None, None, None, None, f"Erro XML: {e}"
     else:
         cad, df_form, df_compl, df_prod, df_comp = processar_pdf_fallback(arquivo_carregado)
         return cad, df_form, df_compl, df_prod, df_comp, pd.DataFrame(), pd.DataFrame(), "PDF"
 
-def main():
-    # Caminho da sua logo (certifique-se de que o ficheiro se chama logo_ueup.jpeg)
+def main() -> None:
+    """Função Mestra: Inicializa layout, captura inputs e orquestra os módulos de UI."""
     LOGO_PATH = "logo_ueup.jpeg"
 
-    # 1. Configuração da página com a Logo no ícone do separador (Favicon)
+    # Configuração Inicial da Página
     try:
         st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=LOGO_PATH)
     except Exception:
-        # Fallback caso a imagem não seja encontrada de imediato
         st.set_page_config(page_title=UiConfig.PAGE_TITLE, layout=UiConfig.LAYOUT, page_icon=UiConfig.PAGE_ICON)
     
-    # 2. Cabeçalho Principal Orgânico (Logo + Título lado a lado)
+    # Cabeçalho Principal
     col_logo, col_title = st.columns([1, 10])
     with col_logo:
         try:
-            st.image(LOGO_PATH, width=70) # Tamanho alinhado ao lado do título
+            st.image(LOGO_PATH, width=70) 
         except Exception:
-            st.markdown(f"<h1>{UiConfig.PAGE_ICON}</h1>", unsafe_allow_html=True) # Fallback
-            
+            st.markdown(f"<h1>{UiConfig.PAGE_ICON}</h1>", unsafe_allow_html=True)
     with col_title:
         st.title(UiConfig.HEADER_TITLE)
 
+    # Configuração do Menu Lateral (Sidebar)
     with st.sidebar:
-        # 3. Barra Lateral (Sidebar) com destaque da marca no topo
         try:
             st.image(LOGO_PATH, use_container_width=True)
         except Exception:
@@ -669,7 +803,7 @@ def main():
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
         
-        # --- NOVA OPÇÃO: Interação com o Humor do Utilizador ---
+        # Mapeamentos de Estado (Humor e Vibe)
         opcoes_humor_usuario = {
             "🚀 Motivado e focado": "motivado",
             "🤔 Reflexivo, buscando clareza": "reflexivo",
@@ -677,10 +811,9 @@ def main():
             "😴 Cansado, prefiro algo direto e prático": "cansado"
         }
         humor_selecionado = st.selectbox("Como se sente hoje?", list(opcoes_humor_usuario.keys()))
-        # Guardamos a variável na sessão para que a IA (Chat/Roadmap) possa usá-la mais tarde
-        st.session_state['humor_usuario'] = opcoes_humor_usuario[humor_selecionado]
+        humor_estado = opcoes_humor_usuario[humor_selecionado]
+        st.session_state['humor_usuario'] = humor_estado
         
-        # --- OPÇÃO EXISTENTE: Personalidade da IA ---
         opcoes_vibe = {
             "👔 Profissional/Sério": "Profissional/Sério",
             "🔥 Entusiasta/Motivacional": "Entusiasta/Motivacional",
@@ -688,8 +821,10 @@ def main():
             "😎 Divertido/Descontraído": "Divertido/Descontraído"
         }
         vibe_selecionada = st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()))
-        vibe = opcoes_vibe[vibe_selecionada]
-        aplicar_estilo_dinamico(vibe)
+        vibe_estado = opcoes_vibe[vibe_selecionada]
+        
+        # Chamada do construtor de CSS Seguro
+        h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
         
         st.divider()
         st.header("📌 Visualização de Dados")
@@ -704,15 +839,19 @@ def main():
         show_ikigai = st.checkbox(UiConfig.SEC_IKIGAI, value=False)
         show_match = st.checkbox(UiConfig.SEC_MATCH, value=False)
         show_chat = st.checkbox(UiConfig.SEC_CHAT, value=False)
+        show_roadmap = st.checkbox(UiConfig.SEC_ROADMAP, value=False)
         show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False)
-        # Opção para o Roadmap
-        show_roadmap = st.checkbox(UiConfig.SEC_ROADM, value=False)
 
+    # Linha Dinâmica Reativa ao Humor abaixo do título
+    st.markdown(f"<div style='height: 5px; width: 100%; background-color: {h_color}; border-radius: 5px; margin-top: -15px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
+
+    # Orquestração do Fluxo de Dados e Renderização Modular
     if arquivo:
         with st.spinner("Trabalhando -> Inteligência de Dados..."):
             dados = carregar_dados_cacheado(arquivo)
             if dados[0] is None:
-                st.error(dados[-1]); st.stop()
+                st.error(dados[-1])
+                st.stop()
             cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos, msg = dados
 
         c1, c2 = st.columns([3, 1])
@@ -720,65 +859,27 @@ def main():
         c2.caption(f"Fonte: {msg}")
         st.divider()
 
-        # Renderização condicional baseada nos checkboxes da barra lateral
+        # Chamadas Estruturadas (Clean Code)
         if show_home:
-            st.subheader(f"👤 {UiConfig.SEC_HOME}")
-            with st.container(border=True):
-                col_avatar, col_info = st.columns([1, 5])
-                with col_avatar: st.markdown("# 🎓")
-                with col_info:
-                    st.markdown(f"### {cad.get('NOME COMPLETO')}")
-                    st.markdown(f"**ID LATTES:** {cad.get('ID LATTES')}")
-                    st.caption(f"Última atualização: {cad.get('DATA ATUALIZAÇÃO')}")
-                st.divider()
-                c1, c2, c3, c4 = st.columns(4)
-                with c1:
-                    st.markdown("###### 🪪 Documentos")
-                    st.markdown(f"**CPF:** {cad.get('CPF')}\n**RG:** {cad.get('RG')}\n**ORCID:** {cad.get('ORCID')}")
-                with c2:
-                    st.markdown("###### 🧬 Pessoal")
-                    st.markdown(f"**Nascimento:** {cad.get('DATA NASCIMENTO')}\n**Sexo:** {cad.get('SEXO')}\n**Raça:** {cad.get('COR/RAÇA')}")
-                with c3:
-                    st.markdown("###### 🌍 Origem")
-                    st.markdown(f"**Nacionalidade:** {cad.get('NACIONALIDADE')}\n**País:** {cad.get('PAÍS NASCIMENTO')}\n**Local:** {cad.get('CIDADE/UF')}")
-                with c4:
-                    st.markdown("###### 👪 Filiação")
-                    st.markdown(f"{cad.get('FILIAÇÃO')}")
-                st.markdown("---")
-                st.markdown("###### 📝 Resumo Biográfico")
-                st.write(cad.get('RESUMO'))
+            modulo_ficha_cadastral(cad)
             st.divider()
 
         if show_edu:
-            st.subheader(f"🎓 {UiConfig.SEC_EDU}")
-            c1, c2 = st.columns(2)
-            with c1: 
-                st.markdown("**Acadêmica**")
-                if not df_form.empty: st.dataframe(df_form, use_container_width=True, hide_index=True)
-            with c2: 
-                st.markdown("**Complementar**")
-                if not df_compl.empty: st.dataframe(df_compl, use_container_width=True, hide_index=True)
+            modulo_formacao(df_form, df_compl)
             st.divider()
 
         if show_dash:
-            st.subheader(f"📊 {UiConfig.SEC_DASH}")
-            if not df_prod.empty:
-                df_filtro = df_prod[df_prod['Ano'] >= ano_inicio]
-                k1, k2 = st.columns(2)
-                with k1: st.plotly_chart(px.bar(df_filtro.groupby(['Ano', 'Macro Categoria']).size().reset_index(name='Q'), x='Ano', y='Q', color='Macro Categoria'), use_container_width=True)
-                with k2: st.plotly_chart(px.sunburst(df_filtro, path=['Macro Categoria', 'Tipo']), use_container_width=True)
+            modulo_dashboard(df_prod, ano_inicio)
             st.divider()
 
         if show_prod:
-            st.subheader("📚 Tabela Produção")
-            st.dataframe(df_prod, use_container_width=True)
+            modulo_tabela_producao(df_prod)
             st.divider()
 
         if show_skills:
             mostra_skills(df_skills, st)
             st.divider()
 
-        # Renderização dos novos módulos de Inteligência
         if show_ikigai:
             modulo_ikigai(df_skills)
             st.divider()
@@ -788,15 +889,15 @@ def main():
             st.divider()
             
         if show_chat:
-            modulo_chat_ia(cad, vibe)
+            modulo_chat_ia(cad, vibe_estado)
             st.divider()
-  
-        if show_roadmap:
-            modulo_roadmap(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
-            st.divider()
-        
+            
         if show_cv_gen:
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
+            st.divider()
+            
+        if show_roadmap:
+            modulo_roadmap()
             st.divider()
 
     else:
