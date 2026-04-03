@@ -1,3 +1,8 @@
+#1. **Expansão de Personalidade e Humor:** Adicionei mais 2 opções para cada. Agora temos a IA "Tecnológica/Direta" (Cyberpunk) e "Mentor Filosófico" (Socrático). No humor, adicionei "Empolgado e Criativo" e "Zen/Calmo". O CSS e a Barra de Energia reagem a todas elas instantaneamente.
+#2. **Visual da Trilha Dinâmica Aprimorado:** Desenhei um "Card Layout" para mostrar o caminho (Passado, Presente e Futuro). Adicionei escalas de avaliação interativas (`st.slider` e `st.checkbox`) para o utilizador medir o seu próprio domínio nas competências (Metodologia Ativa).
+#3. **Filtros e Design no Analytics:** O *Dashboard* agora tem filtros multicritério e gráficos mais ricos. A área de *Skills* ganhou um novo gráfico de Barras com as "Top 10 Habilidades Extraídas".
+#4. **Ingestão Multimodal Expandida:** Adicionei a área de upload de "Evidências Extras" (Certificados, Imagens, Portfólio) diretamente na *Sidebar* para enriquecer o perfil, com contagem dinâmica no ecrã de Ingestão.
+
 import streamlit as st
 import pandas as pd
 import xml.etree.ElementTree as ET
@@ -20,9 +25,9 @@ class UiConfig:
     
     SIDEBAR_TITLE_1 = "1. Personalização da IA"
     SIDEBAR_TITLE_2 = "2. Navegação da Jornada"
-    SIDEBAR_TITLE_3 = "3. Ingestão de Dados"
+    SIDEBAR_TITLE_3 = "3. Ingestão Multimodal"
     
-    # Novas Secções Macro (Roteamento)
+    # Secções Macro (Roteamento)
     SEC_ONBOARDING = "🌟 Início: Autodescoberta (Ikigai)"
     SEC_INGESTAO = "📥 Analytics & Perfil Lattes"
     SEC_TRILHA = "🗺️ Trilha Dinâmica (Modo Foco)"
@@ -100,23 +105,27 @@ ABREVIACOES_LATTES = {
 }
 
 # ==============================================================================
-# 2. FUNÇÕES DE UX DINÂMICA E CORES (BLINDADAS 3.0)
+# 2. FUNÇÕES DE UX DINÂMICA E CORES (AMPLIADAS E BLINDADAS 4.0)
 # ==============================================================================
 
 def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
-    """CSS Blindado 3.0: Templates globais, Shadow DOM e adaptação visual."""
+    """CSS Blindado: Templates globais com 6 Vibes e 6 Humores."""
     temas = {
         "Profissional/Sério": {"primary": "#005bb5", "bg_side": "#0e1117", "bg_main": "#f4f6f9"},
         "Entusiasta/Motivacional": {"primary": "#d32f2f", "bg_side": "#1a0b0b", "bg_main": "#fff5f5"},
         "Acadêmico/Crítico": {"primary": "#006b3c", "bg_side": "#09140b", "bg_main": "#f0f5f1"},
-        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg_side": "#120a1f", "bg_main": "#f9f5fa"}
+        "Divertido/Descontraído": {"primary": "#7b1fa2", "bg_side": "#120a1f", "bg_main": "#f9f5fa"},
+        "Tecnológico/Direto": {"primary": "#00E676", "bg_side": "#000000", "bg_main": "#e8fdf0"},
+        "Mentor Filosófico": {"primary": "#B8860B", "bg_side": "#1c140d", "bg_main": "#fcfaf5"}
     }
     
     humor_cores = {
-        "motivado": "#FFD700",
-        "reflexivo": "#00E5FF",
-        "sobrecarregado": "#FF5252",
-        "cansado": "#9E9E9E"
+        "motivado": "#FFD700",       # Dourado
+        "reflexivo": "#00E5FF",      # Ciano
+        "sobrecarregado": "#FF5252", # Vermelho
+        "cansado": "#9E9E9E",        # Cinza
+        "empolgado": "#FF7F50",      # Laranja/Coral
+        "zen": "#20B2AA"             # Verde Água
     }
     
     t = temas.get(vibe, temas["Profissional/Sério"])
@@ -139,7 +148,7 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
         [data-testid="stSidebar"] h3 {{ color: #ffffff !important; }}
         div[data-baseweb="select"] span {{ color: #1e1e1e !important; }}
 
-        /* FILE UPLOADER BLINDADO */
+        /* FILE UPLOADER BLINDADO (Aplica-se a todos os Uploaders da tela) */
         div[data-testid="stFileUploader"] section,
         [data-testid="stFileUploadDropzone"] {{ 
             background-color: #1e1e24 !important; 
@@ -165,7 +174,7 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
         [data-testid="stUploadedFile"] * {{ color: #ffffff !important; }}
 
         header[data-testid="stHeader"] {{ border-bottom: 4px solid {h_color} !important; background-color: transparent !important; }}
-        .main h1, .main h2, .main h3 {{ color: {t['primary']} !important; }}
+        .main h1, .main h2, .main h3, .main h4, .main h5 {{ color: {t['primary']} !important; }}
         .main .stButton>button {{ border: 2px solid {t['primary']} !important; color: {t['primary']} !important; background-color: transparent !important; font-weight: bold; }}
         .main .stButton>button:hover {{ background-color: {t['primary']} !important; color: #ffffff !important; }}
         </style>
@@ -442,13 +451,13 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
 def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
     """Jornada de Autodescoberta Dialógica."""
     st.subheader("🎡 O Seu IKIGAI")
-    st.markdown("O Ikigai ajuda a cruzar suas habilidades (Lattes) com seu propósito de vida e mercado. Esqueça formulários chatos por um momento.")
+    st.markdown("O Ikigai ajuda a cruzar suas habilidades com seu propósito de vida e mercado. Esqueça formulários chatos por um momento.")
     col1, col2 = st.columns([1, 1])
     
     with col1:
         love = st.text_area("1. O que você ama? (Paixão)", "Ex: Inovação, pesquisar IoT e mentorar pessoas.")
         skills_detected = df_skills['Competencia'].tolist() if not df_skills.empty else []
-        good_at = st.multiselect("2. No que você é bom? (Extraído do Lattes)", options=list(set(SOFTSKILLS_LISTA + skills_detected)), default=skills_detected[:3] if skills_detected else None)
+        good_at = st.multiselect("2. No que você é bom? (Extraído das suas evidências)", options=list(set(SOFTSKILLS_LISTA + skills_detected)), default=skills_detected[:3] if skills_detected else None)
         needs = st.text_input("3. O que o mundo precisa? (Missão)", "Ex: Transformação digital responsável.")
         paid_for = st.text_input("4. Pelo que pode ser pago? (Vocação)", "Ex: Consultoria em TI, Docência.")
         
@@ -468,7 +477,7 @@ def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
         dot.edge('A', 'I'); dot.edge('B', 'I'); dot.edge('C', 'I'); dot.edge('D', 'I')
         st.graphviz_chart(dot)
 
-def modulo_ficha_cadastral(cad: Dict[str, str]) -> None:
+def modulo_ficha_cadastral(cad: Dict[str, str], arquivos_adicionais: list) -> None:
     with st.container(border=True):
         col_avatar, col_info = st.columns([1, 5])
         with col_avatar: st.markdown("# 🎓")
@@ -476,6 +485,11 @@ def modulo_ficha_cadastral(cad: Dict[str, str]) -> None:
             st.markdown(f"### {cad.get('NOME COMPLETO')}")
             st.markdown(f"**ID LATTES:** {cad.get('ID LATTES')}")
             st.caption(f"Última atualização: {cad.get('DATA ATUALIZAÇÃO')}")
+        
+        # Mostra as evidências extras que o usuário subiu
+        if arquivos_adicionais:
+            st.success(f"📎 {len(arquivos_adicionais)} evidência(s) extras (Certificados/Portfólio) anexadas ao seu perfil localmente.")
+        
         st.divider()
         c1, c2, c3, c4 = st.columns(4)
         with c1:
@@ -504,60 +518,108 @@ def modulo_formacao(df_form: pd.DataFrame, df_compl: pd.DataFrame) -> None:
         if not df_compl.empty: st.dataframe(df_compl, use_container_width=True, hide_index=True)
 
 def modulo_dashboard(df_prod: pd.DataFrame, ano_inicio: int) -> None:
+    """Dashboard de Produção com filtros visuais ampliados."""
+    st.subheader(f"📊 Produção e Evolução")
     if not df_prod.empty:
-        df_filtro = df_prod[df_prod['Ano'] >= ano_inicio]
+        # Filtros visuais
+        filtros_col, _ = st.columns([2, 1])
+        cats_disponiveis = df_prod['Macro Categoria'].unique().tolist()
+        cats_selecionadas = filtros_col.multiselect("Filtrar por Categoria Lattes:", cats_disponiveis, default=cats_disponiveis)
+        
+        df_filtro = df_prod[(df_prod['Ano'] >= ano_inicio) & (df_prod['Macro Categoria'].isin(cats_selecionadas))]
+        
+        if df_filtro.empty:
+            st.warning("Nenhum dado encontrado para os filtros aplicados.")
+            return
+
         k1, k2 = st.columns(2)
         with k1: 
-            fig_bar = px.bar(df_filtro.groupby(['Ano', 'Macro Categoria']).size().reset_index(name='Q'), x='Ano', y='Q', color='Macro Categoria')
+            df_bar = df_filtro.groupby(['Ano', 'Macro Categoria']).size().reset_index(name='Q')
+            fig_bar = px.bar(df_bar, x='Ano', y='Q', color='Macro Categoria', title="Evolução Anual", text_auto=True)
+            fig_bar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig_bar, use_container_width=True)
         with k2: 
-            fig_sun = px.sunburst(df_filtro, path=['Macro Categoria', 'Tipo'])
+            fig_sun = px.sunburst(df_filtro, path=['Macro Categoria', 'Tipo'], title="Distribuição do Portfólio")
+            fig_sun.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(t=30, l=0, r=0, b=0))
             st.plotly_chart(fig_sun, use_container_width=True)
 
 def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
+    """Painel de Skills aprimorado com Top Skills em Barras."""
+    st_obj.subheader(f"🧠 Inteligência de Skills")
     if df_comp.empty:
         st_obj.info("Competências não identificadas no arquivo.")
         return
     options_list = sorted(df_comp['Tipo'].unique())
     selected_types = st_obj.multiselect("Filtrar Área de Competência:", options=options_list, default=options_list)
+    
     df_filtered = df_comp[df_comp['Tipo'].isin(selected_types)].copy()
     df_cleaned = df_filtered[df_filtered['Ano'] > 0].drop_duplicates()
+    
     if df_cleaned.empty:
         st_obj.warning("Sem dados válidos para o filtro selecionado.")
         return
-    col_heatmap, col_radar = st_obj.columns([2, 1])
-    with col_heatmap:
-        df_heatmap = df_cleaned.groupby(['Ano', 'Tipo']).size().reset_index(name='V')
-        fig_heatmap = px.density_heatmap(df_heatmap, x='Ano', y='Tipo', z='V', title="Skills por Ano", color_continuous_scale='Magma')
-        st_obj.plotly_chart(fig_heatmap, use_container_width=True)
+        
+    col_bar, col_radar = st_obj.columns([1.5, 1])
+    with col_bar:
+        df_top = df_cleaned['Competencia'].value_counts().head(10).reset_index()
+        df_top.columns = ['Competencia', 'Frequência']
+        fig_top = px.bar(df_top, x='Frequência', y='Competencia', orientation='h', title="Top 10 Habilidades Extraídas", color='Frequência', color_continuous_scale='Teal')
+        fig_top.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+        st_obj.plotly_chart(fig_top, use_container_width=True)
     with col_radar:
         df_radar = df_cleaned['Tipo'].value_counts().reset_index(name='Q')
         df_radar.columns = ['Tipo', 'Q']
-        fig_radar = px.line_polar(df_radar, r='Q', theta='Tipo', line_close=True, title="Radar de Perfil")
+        fig_radar = px.line_polar(df_radar, r='Q', theta='Tipo', line_close=True, title="Radar de Macro-Perfil")
+        fig_radar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st_obj.plotly_chart(fig_radar, use_container_width=True)
+        
+    with st_obj.expander("Ver Matriz de Calor (Heatmap) de Skills por Ano"):
+        df_heatmap = df_cleaned.groupby(['Ano', 'Tipo']).size().reset_index(name='V')
+        fig_heatmap = px.density_heatmap(df_heatmap, x='Ano', y='Tipo', z='V', color_continuous_scale='Magma')
+        st_obj.plotly_chart(fig_heatmap, use_container_width=True)
 
 def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
-    """Grafo de Trilha (DAG) com UX Inclusiva e Mentor IAG acoplado."""
+    """Grafo de Trilha (DAG) com escalas de avaliação e Modo Foco."""
     col_obj, col_foco = st.columns([3, 1])
-    col_obj.markdown("### 🎯 Rumo a: Dev Backend Python")
-    modo_foco = col_foco.toggle("⚡ MODO FOCO", value=False, help="Oculta o futuro e reduz ansiedade.")
+    col_obj.markdown("### 🎯 Trilha de Letramento: Especialista em Dados")
+    modo_foco = col_foco.toggle("⚡ MODO FOCO", value=False, help="Oculta a jornada completa e foca no agora.")
 
     if modo_foco:
-        st.warning("🌫️ **Névoa do Futuro ativada:** Concentre-se estritamente no agora.")
-        st.markdown("#### 🔵 NÓ ATUAL (Pulsante)")
-        st.button("🚀 INICIAR MICRO-SPRINT: Primeira API com Flask (25 min)", use_container_width=True)
-        st.markdown("- **Próximo Passo:** Conectando ao Banco de Dados (15 min)")
+        st.warning("🌫️ **Névoa do Futuro ativada:** Sua carga cognitiva foi reduzida.")
+        with st.container(border=True):
+            st.markdown("#### 🔵 NÓ ATUAL: Lógica de Extração com Python (30 min)")
+            st.progress(0.2, "Micro-sprint em andamento...")
+            
+            st.markdown("**Checklist do Sprint:**")
+            st.checkbox("Ler documentação do BeautifulSoup")
+            st.checkbox("Montar o primeiro script de parser")
+            st.checkbox("Lidar com exceções (try/except)")
+            
+            st.markdown("---")
+            st.slider("Em uma escala de 1 a 5, qual o seu domínio atual neste tópico?", min_value=1, max_value=5, value=2, help="Isto ajudará a IAG a ajustar a complexidade da trilha.")
+            
+            st.button("🚀 CONCLUIR MICRO-SPRINT", use_container_width=True, type="primary")
+            
+        st.markdown("- **Próximo Passo:** Persistência em Banco de Dados SQL (20 min)")
     else:
-        st.progress(0.45, text="Progresso Consolidado da Trilha: 45% (Faltam ~6 semanas no ritmo atual)")
-        st.markdown("✔️ **Concluído:** Lógica e Estrutura de Dados")
-        st.markdown("🔵 **Nó Atual:** Criar primeira API com Flask")
-        st.markdown("⚪ **Próximo:** Conectando ao Banco de Dados")
-        st.markdown("🌫️ *Névoa do Futuro: Containers, Deploy e CI/CD (Desbloqueia em breve)*")
-        st.info("💡 A Trilha Dinâmica em breve será re-calculada automaticamente cada vez que você subir um novo Lattes ou evidência.")
+        st.progress(0.45, text="Progresso Consolidado da Trilha: 45% (Faltam ~4 semanas no ritmo atual)")
+        
+        st.markdown("#### Seu Mapa de Jornada")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.info("✔️ **Concluído**\n\nFundamentos de Algoritmos\n\n*Autoavaliação: 4.5/5*")
+        with c2:
+            st.success("🔵 **Nó Atual**\n\nLógica de Extração Python\n\n*Em andamento*")
+            st.slider("Avalie seu domínio parcial (1-5):", 1, 5, 2, key="slider_trilha")
+        with c3:
+            st.markdown("<div style='opacity: 0.5; border: 1px dashed gray; padding: 10px; border-radius: 5px;'>⚪ <b>Próximo Passo</b><br><br>Persistência em Bancos SQL</div>", unsafe_allow_html=True)
+
+        st.caption("🌫️ *Névoa do Futuro: Pipelines ETL e Dashboards (Desbloqueia em breve)*")
+        st.info("💡 A Trilha Dinâmica é re-calculada automaticamente cada vez que o seu perfil é validado pelo sistema.")
         
     st.divider()
     st.subheader(f"💬 Mentor IAG ueUP")
-    st.markdown("Relate seus sentimentos, dúvidas sobre o sprint atual ou peça para recalcular a rota.")
+    st.markdown("Relate sentimentos, dúvidas sobre a competência atual ou peça para pivotar sua carreira.")
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -570,17 +632,19 @@ def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
         with st.chat_message("user"): st.markdown(prompt)
 
         toms = {
-            "Profissional/Sério": f"Analisando seu input ({prompt}...), recomendo uma abordagem técnica e focada.",
-            "Entusiasta/Motivacional": f"Incrível! Superar '{prompt}' faz parte da jornada. Vamos pra cima!",
-            "Acadêmico/Crítico": f"Sob a ótica de aprendizagem contínua, enfrentar '{prompt}' é um passo metodológico essencial.",
-            "Divertido/Descontraído": f"E aí! Relaxa, todo mundo trava em '{prompt}' de vez em quando. Vamos resolver isso juntos."
+            "Profissional/Sério": f"Avaliando seu input ({prompt}...), recomendo uma revisão estratégica focada em resultados.",
+            "Entusiasta/Motivacional": f"Incrível! Todo o progresso em '{prompt}' constrói a sua base de sucesso. Vamos em frente!",
+            "Acadêmico/Crítico": f"Do ponto de vista cognitivo, a dificuldade em '{prompt}' é um estágio de assimilação necessário.",
+            "Divertido/Descontraído": f"Tranquilo! Aprender sobre '{prompt}' dá um nó na cabeça no começo. Vamos juntos.",
+            "Tecnológico/Direto": f"Input recebido: '{prompt}'. Analisando gaps. Recomendação: Iterar o processo de estudo em blocos curtos.",
+            "Mentor Filosófico": f"O desafio em '{prompt}' nos questiona: o que realmente significa dominar uma habilidade? Reflita sobre os fundamentos."
         }
         res = toms.get(vibe, "Recebido! Como posso auxiliar melhor?")
         st.session_state.messages.append({"role": "assistant", "content": res})
         with st.chat_message("assistant"): st.markdown(res)
 
 def modulo_match_vagas() -> None:
-    st.markdown("Analise se o seu perfil extraído do Lattes está aderente a uma vaga de mercado.")
+    st.markdown("Analise se o seu perfil Lattes + Evidências Extras está aderente a uma vaga de mercado.")
     vaga_text = st.text_area("Cole a descrição da vaga alvo (Job Description):", height=150)
     if st.button("Analisar Aderência à Vaga"):
         if vaga_text:
@@ -593,7 +657,7 @@ def modulo_match_vagas() -> None:
             st.warning("Cole o texto da vaga primeiro.")
 
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
-    st.markdown("> **Mentoria de Carreira:** O Assistente gerará um currículo Markdown focado na vaga escolhida, mas você pode editar as seções brutas abaixo.")
+    st.markdown("> **Mentoria de Carreira:** A IAG gerará um currículo Markdown focado na vaga escolhida. Edite as seções brutas abaixo se necessário.")
     
     selecoes = {'form': pd.DataFrame(), 'compl': pd.DataFrame(), 'tech': [], 'soft': [], 'lang': [], 'jobs': pd.DataFrame(), 'projs': pd.DataFrame()}
     tabs = st.tabs(["1. Cabeçalho & Resumo", "2. Experiência", "3. Projetos", "4. Skills & Idiomas", "5. Educação"])
@@ -739,7 +803,9 @@ def main() -> None:
             "🚀 Motivado e focado": "motivado",
             "🤔 Reflexivo, buscando clareza": "reflexivo",
             "🤯 Sobrecarregado, preciso de direção": "sobrecarregado",
-            "😴 Cansado, prefiro algo direto": "cansado"
+            "😴 Cansado, prefiro algo direto": "cansado",
+            "🤩 Empolgado e criativo": "empolgado",
+            "🧘 Zen, num ritmo calmo": "zen"
         }
         humor_estado = opcoes_humor[st.selectbox("Como se sente hoje?", list(opcoes_humor.keys()))]
         st.session_state['humor_usuario'] = humor_estado
@@ -748,13 +814,14 @@ def main() -> None:
             "👔 Profissional/Sério": "Profissional/Sério",
             "🔥 Entusiasta/Motivacional": "Entusiasta/Motivacional",
             "🧐 Acadêmico/Crítico": "Acadêmico/Crítico",
-            "😎 Divertido/Descontraído": "Divertido/Descontraído"
+            "😎 Divertido/Descontraído": "Divertido/Descontraído",
+            "🤖 Tecnológico/Direto": "Tecnológico/Direto",
+            "🧠 Mentor Filosófico": "Mentor Filosófico"
         }
         vibe_estado = opcoes_vibe[st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()))]
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
-        # O Roteador Principal (Substitui as antigas checkboxes soltas)
         menu = st.radio("Jornada ueUP", [
             UiConfig.SEC_ONBOARDING,
             UiConfig.SEC_INGESTAO,
@@ -764,18 +831,18 @@ def main() -> None:
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_3)
-        st.caption("A base do seu currículo dinâmico")
-        arquivo = st.file_uploader("Carregar XML ou PDF Lattes", type=['xml', 'pdf'])
+        st.caption("A base principal do seu perfil")
+        arquivo = st.file_uploader("Carregar Lattes (XML/PDF)", type=['xml', 'pdf'])
         ano_inicio = st.number_input("Ano Base (Filtro Gráficos)", min_value=1970, max_value=datetime.now().year + 1, value=2018)
+        
+        st.caption("Evidências Extras")
+        arquivos_adicionais = st.file_uploader("Certificados, Portfólio (PDF/Imagens)", accept_multiple_files=True)
 
-    # 🚀 FIX: Injeção Global de CSS (Fora da Sidebar para evitar Shadow DOM Lock)
+    # Injeção Global de CSS e Cor da Barra de Energia
     h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
-
-    # Linha Dinâmica de Humor (Renderiza logo abaixo do Header)
     st.markdown(f"<div style='height: 5px; width: 100%; background-color: {h_color}; border-radius: 5px; margin-top: -15px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
 
-    # --- PROCESSAMENTO DE DADOS (GLOBAL) ---
-    # Inicializamos variáveis vazias por segurança de estado
+    # Processamento de Dados Lattes
     cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos = {}, pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     
     if arquivo:
@@ -796,7 +863,7 @@ def main() -> None:
     elif menu == UiConfig.SEC_INGESTAO:
         st.subheader(f"📊 {UiConfig.SEC_INGESTAO}")
         if arquivo and cad:
-            modulo_ficha_cadastral(cad)
+            modulo_ficha_cadastral(cad, arquivos_adicionais)
             st.divider()
             modulo_dashboard(df_prod, ano_inicio)
             st.divider()
@@ -819,7 +886,7 @@ def main() -> None:
             st.divider()
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
         else:
-            st.warning("👈 A Inteligência do Gerador de Currículos e Match de Vagas exige que seu Lattes esteja carregado no painel à esquerda.")
+            st.warning("👈 A Inteligência do Gerador de Currículos e Match de Vagas exige que seu perfil base esteja carregado no painel à esquerda.")
 
 if __name__ == "__main__":
     main()
