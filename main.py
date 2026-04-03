@@ -1,8 +1,3 @@
-#1. **Expansão de Personalidade e Humor:** Adicionei mais 2 opções para cada. Agora temos a IA "Tecnológica/Direta" (Cyberpunk) e "Mentor Filosófico" (Socrático). No humor, adicionei "Empolgado e Criativo" e "Zen/Calmo". O CSS e a Barra de Energia reagem a todas elas instantaneamente.
-#2. **Visual da Trilha Dinâmica Aprimorado:** Desenhei um "Card Layout" para mostrar o caminho (Passado, Presente e Futuro). Adicionei escalas de avaliação interativas (`st.slider` e `st.checkbox`) para o utilizador medir o seu próprio domínio nas competências (Metodologia Ativa).
-#3. **Filtros e Design no Analytics:** O *Dashboard* agora tem filtros multicritério e gráficos mais ricos. A área de *Skills* ganhou um novo gráfico de Barras com as "Top 10 Habilidades Extraídas".
-#4. **Ingestão Multimodal Expandida:** Adicionei a área de upload de "Evidências Extras" (Certificados, Imagens, Portfólio) diretamente na *Sidebar* para enriquecer o perfil, com contagem dinâmica no ecrã de Ingestão.
-
 import streamlit as st
 import pandas as pd
 import xml.etree.ElementTree as ET
@@ -99,7 +94,9 @@ MAPA_COMPETENCIAS = {
     # 🏥 Saúde e Biológicas
     'Saúde & Biológicas': ['saúde', 'clínica', 'hospital', 'paciente', 'tratamento', 'diagnóstico', 'enfermagem', 'medicina', 'terapia', 'farmácia', 'biomedicina', 'telemedicina', 'bioinformática'],
     # 🗣️ Idiomas
-    'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim', 'japonês']
+    'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim', 'japonês'],
+    # 🤝 NOVA CATEGORIA: Mapeamento direto de Soft Skills nas entrelinhas
+    'Soft Skills & Comportamental': ['comunicação', 'equipe', 'liderança', 'resolução de problemas', 'crítico', 'adaptabilidade', 'flexibilidade', 'tempo', 'emocional', 'criatividade', 'inovação', 'negociação', 'mentoria', 'proatividade', 'resiliência', 'empatia', 'colaboração', 'storytelling', 'decisão', 'soft skill', 'comportamental']
 }
 
 SOFTSKILLS_LISTA = [
@@ -492,7 +489,6 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
 # ==============================================================================
 
 def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
-    """Jornada de Autodescoberta Dialógica."""
     st.subheader("🎡 O Seu IKIGAI")
     st.markdown("O Ikigai ajuda a cruzar suas habilidades com seu propósito de vida e mercado. Esqueça formulários chatos por um momento.")
     col1, col2 = st.columns([1, 1])
@@ -529,7 +525,6 @@ def modulo_ficha_cadastral(cad: Dict[str, str], arquivos_adicionais: list) -> No
             st.markdown(f"**ID LATTES:** {cad.get('ID LATTES')}")
             st.caption(f"Última atualização: {cad.get('DATA ATUALIZAÇÃO')}")
         
-        # Mostra as evidências extras que o usuário subiu
         if arquivos_adicionais:
             st.success(f"📎 {len(arquivos_adicionais)} evidência(s) extras (Certificados/Portfólio) anexadas ao seu perfil localmente.")
         
@@ -561,16 +556,13 @@ def modulo_formacao(df_form: pd.DataFrame, df_compl: pd.DataFrame) -> None:
         if not df_compl.empty: st.dataframe(df_compl, use_container_width=True, hide_index=True)
 
 def modulo_dashboard(df_prod: pd.DataFrame, ano_inicio: int) -> None:
-    """Dashboard de Produção com filtros visuais ampliados."""
     st.subheader(f"📊 Produção e Evolução")
     if not df_prod.empty:
-        # Filtros visuais
         filtros_col, _ = st.columns([2, 1])
         cats_disponiveis = df_prod['Macro Categoria'].unique().tolist()
         cats_selecionadas = filtros_col.multiselect("Filtrar por Categoria Lattes:", cats_disponiveis, default=cats_disponiveis)
         
         df_filtro = df_prod[(df_prod['Ano'] >= ano_inicio) & (df_prod['Macro Categoria'].isin(cats_selecionadas))]
-        
         if df_filtro.empty:
             st.warning("Nenhum dado encontrado para os filtros aplicados.")
             return
@@ -587,13 +579,12 @@ def modulo_dashboard(df_prod: pd.DataFrame, ano_inicio: int) -> None:
             st.plotly_chart(fig_sun, use_container_width=True)
 
 def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
-    """Painel de Skills aprimorado com Top Skills em Barras."""
-    st_obj.subheader(f"🧠 Inteligência de Skills")
+    st_obj.subheader(f"🧠 Inteligência de Skills (Hard Skills)")
     if df_comp.empty:
         st_obj.info("Competências não identificadas no arquivo.")
         return
     options_list = sorted(df_comp['Tipo'].unique())
-    selected_types = st_obj.multiselect("Filtrar Área de Competência:", options=options_list, default=options_list)
+    selected_types = st_obj.multiselect("Filtrar Área de Competência Técnica:", options=options_list, default=[o for o in options_list if 'Soft' not in o])
     
     df_filtered = df_comp[df_comp['Tipo'].isin(selected_types)].copy()
     df_cleaned = df_filtered[df_filtered['Ano'] > 0].drop_duplicates()
@@ -615,14 +606,63 @@ def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
         fig_radar = px.line_polar(df_radar, r='Q', theta='Tipo', line_close=True, title="Radar de Macro-Perfil")
         fig_radar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st_obj.plotly_chart(fig_radar, use_container_width=True)
+
+# ------------------------------------------------------------------------------
+# NOVO MÓDULO: EXTRAÇÃO E INTERAÇÃO DE SOFT SKILLS
+# ------------------------------------------------------------------------------
+def modulo_soft_skills(df_skills: pd.DataFrame) -> None:
+    st.subheader("🤝 Inteligência Comportamental (Soft Skills)")
+    st.markdown("Habilidades do Século XXI extraídas das entrelinhas do seu perfil, com autoavaliação.")
+
+    soft_extraidas = []
+    if not df_skills.empty:
+        soft_df = df_skills[df_skills['Tipo'] == 'Soft Skills & Comportamental']
+        if not soft_df.empty:
+            soft_extraidas = soft_df['Competencia'].str.title().unique().tolist()
+
+    c1, c2 = st.columns([1, 1.5])
+    with c1:
+        st.info(f"**Detectadas na Ingestão ({len(soft_extraidas)}):**")
+        if soft_extraidas:
+            for s in soft_extraidas:
+                st.markdown(f"- ✅ {s}")
+        else:
+            st.write("Nenhuma soft skill foi explicitamente detectada no Lattes. Isto é muito comum em currículos técnicos e académicos focados apenas em fatos. Utilize a autoavaliação ao lado.")
+
+    with c2:
+        st.write("**Autoavaliação e Mapeamento Ativo**")
+        # Pré-seleciona as que foram detectadas pela IA, ou deixa em branco
+        sugestao_default = [s for s in SOFTSKILLS_LISTA if any(ext.lower() in s.lower() for ext in soft_extraidas)]
         
-    with st_obj.expander("Ver Matriz de Calor (Heatmap) de Skills por Ano"):
-        df_heatmap = df_cleaned.groupby(['Ano', 'Tipo']).size().reset_index(name='V')
-        fig_heatmap = px.density_heatmap(df_heatmap, x='Ano', y='Tipo', z='V', color_continuous_scale='Magma')
-        st_obj.plotly_chart(fig_heatmap, use_container_width=True)
+        selecionadas = st.multiselect(
+            "Quais destas Soft Skills você realmente domina?",
+            options=SOFTSKILLS_LISTA,
+            default=sugestao_default if sugestao_default else ["Trabalho em Equipe", "Adaptabilidade e Flexibilidade"]
+        )
+
+        if selecionadas:
+            st.markdown("Avalie seu nível de domínio para destacar no currículo:")
+            # Criação de DataFrame interativo para avaliar as soft skills
+            df_edit_soft = pd.DataFrame({
+                "Soft Skill": selecionadas,
+                "Domínio (1-5)": [3] * len(selecionadas),
+                "Destacar no CV": [True] * len(selecionadas)
+            })
+            
+            st.data_editor(
+                df_edit_soft,
+                column_config={
+                    "Domínio (1-5)": st.column_config.NumberColumn(
+                        "Nível de Domínio", min_value=1, max_value=5, step=1, format="%d ⭐"
+                    ),
+                    "Destacar no CV": st.column_config.CheckboxColumn("Incluir no CV?")
+                },
+                hide_index=True,
+                use_container_width=True,
+                key="editor_soft_skills"
+            )
 
 def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
-    """Grafo de Trilha (DAG) com escalas de avaliação e Modo Foco."""
     col_obj, col_foco = st.columns([3, 1])
     col_obj.markdown("### 🎯 Trilha de Letramento: Especialista em Dados")
     modo_foco = col_foco.toggle("⚡ MODO FOCO", value=False, help="Oculta a jornada completa e foca no agora.")
@@ -744,7 +784,7 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
             st.markdown("**Hard Skills (Técnicas)**")
             if not df_skills.empty:
                 todas = sorted(df_skills['Competencia'].unique().tolist())
-                sugestao = [x for x in todas if classificar_competencia(x) in ['Tecnologia', 'Gestão']]
+                sugestao = [x for x in todas if classificar_competencia(x) in ['Tecnologia', 'Gestão', 'Dados & IA', 'Dev & Arquitetura']]
                 selecoes['tech'] = st.multiselect("Selecione Techs:", options=todas, default=sugestao[:12])
             else: st.warning("Nenhuma skill detectada.")
         with c_soft:
@@ -913,7 +953,13 @@ def main() -> None:
             st.subheader(f"🎓 Formação Extraída")
             modulo_formacao(df_form, df_compl)
             st.divider()
+            
+            # --- Hard Skills e Soft Skills agrupadas na mesma etapa de Ingestão ---
             mostra_skills(df_skills, st)
+            st.divider()
+            modulo_soft_skills(df_skills)
+            
+            st.divider()
             with st.expander("Ver Tabela Completa de Produção Lattes"):
                 st.dataframe(df_prod, use_container_width=True)
         else:
