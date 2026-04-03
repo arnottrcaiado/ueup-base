@@ -78,12 +78,28 @@ class PdfSections:
     }
 
 MAPA_COMPETENCIAS = {
-    'Tecnologia': ['python', 'sql', 'java', 'dados', 'data', 'analise', 'bi', 'dashboard', 'sistema', 'dev', 'iot', 'arduino', 'software', 'machine learning', 'artificial', 'excel', 'vba', 'power bi', 'tableau', 'steam', 'robotica', 'maker', 'programação', 'api', 'aws', 'cloud', 'azure', 'docker', 'git', 'linux', 'react', 'node', 'html', 'css', 'kubernetes', 'spark', 'hadoop', 'scikit', 'tensorflow'],
-    'Gestão': ['gestão', 'liderança', 'coordenação', 'scrum', 'agile', 'projeto', 'planejamento', 'direção', 'negócios', 'marketing', 'estratégia', 'administração', 'pmbok', 'kanban', 'empreendedorismo', 'inovação', 'processos', 'produto', 'stakeholders'],
-    'Acadêmico': ['docência', 'pesquisa', 'ensino', 'metodologia', 'didática', 'pedagogia', 'orientação', 'banca', 'tcc', 'artigo', 'publicação', 'congresso', 'anais', 'científica', 'educação', 'avaliador'],
-    'Saúde': ['saúde', 'clínica', 'hospital', 'paciente', 'tratamento', 'diagnóstico', 'enfermagem', 'medicina', 'terapia', 'farmácia'],
-    'Engenharia/Ind': ['engenharia', 'processos', 'manutenção', 'industrial', 'automação', 'eletrônica', 'civil', 'mecânica', 'produção', 'elétrica'],
-    'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim']
+    # 💻 Desenvolvimento e Arquitetura de Software
+    'Dev & Arquitetura': ['python', 'java', 'c#', 'c++', 'c', 'javascript', 'typescript', 'ruby', 'php', 'go', 'rust', 'swift', 'kotlin', 'arquitetura de software', 'solid', 'clean code', 'tdd', 'microsserviços', 'ddd', 'testes automatizados', 'poo', 'backend', 'api', 'rest', 'graphql', 'grpc'],
+    # 📱 Desenvolvimento Web e Mobile
+    'Web & Mobile': ['html', 'css', 'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring', 'react native', 'flutter', 'ios', 'android', 'frontend', 'fullstack', 'ux', 'ui', 'figma', 'tailwind', 'bootstrap', 'web', 'mobile'],
+    # 🧠 Ciência de Dados e Inteligência Artificial
+    'Dados & IA': ['dados', 'data science', 'data engineering', 'machine learning', 'deep learning', 'inteligência artificial', 'ia', 'ai', 'sql', 'nosql', 'pandas', 'numpy', 'scikit', 'tensorflow', 'keras', 'pytorch', 'nlp', 'visão computacional', 'big data', 'spark', 'hadoop', 'databricks', 'power bi', 'tableau', 'qlik', 'bi', 'business intelligence', 'etl', 'data warehouse', 'data lake', 'estatística', 'matemática', 'analytics'],
+    # ☁️ Infraestrutura, Cloud e DevOps
+    'Infra, Cloud & DevOps': ['aws', 'azure', 'gcp', 'google cloud', 'cloud', 'nuvem', 'docker', 'kubernetes', 'ci/cd', 'jenkins', 'gitlab', 'github actions', 'terraform', 'ansible', 'linux', 'redes', 'servidores', 'bash', 'shell', 'devops', 'sre', 'infraestrutura', 'git', 'versionamento'],
+    # 🛡️ Segurança da Informação
+    'Segurança & Compliance': ['segurança', 'cibersegurança', 'infosec', 'pentest', 'ethical hacking', 'criptografia', 'firewall', 'lgpd', 'gdpr', 'compliance', 'vulnerabilidades', 'soc', 'owasp', 'identidade', 'siem'],
+    # 🤖 IoT, Robótica e Cultura Maker
+    'IoT, Hardware & Maker': ['iot', 'internet das coisas', 'arduino', 'raspberry pi', 'esp32', 'esp8266', 'robótica', 'maker', 'eletrônica', 'sensores', 'automação', 'sistemas embarcados', 'microcontroladores', 'hardware', 'impressão 3d', 'steam', 'sistemas ciberfísicos'],
+    # 💼 Gestão, Projetos e Negócios
+    'Gestão & Negócios': ['gestão', 'liderança', 'coordenação', 'scrum', 'agile', 'projeto', 'planejamento', 'direção', 'negócios', 'marketing', 'estratégia', 'administração', 'pmbok', 'kanban', 'empreendedorismo', 'inovação', 'processos', 'produto', 'stakeholders', 'itil', 'cobit', 'product management', 'product owner', 'po', 'tech lead', 'governança', 'economia', 'finanças', 'roi'],
+    # 🎓 Mundo Acadêmico e Pesquisa
+    'Acadêmico & Pesquisa': ['docência', 'pesquisa', 'ensino', 'metodologia', 'didática', 'pedagogia', 'orientação', 'banca', 'tcc', 'artigo', 'publicação', 'congresso', 'anais', 'científica', 'educação', 'avaliador', 'revisão', 'mestrado', 'doutorado', 'pós-doutorado', 'cnpq', 'capes', 'fapesp', 'extensão'],
+    # ⚙️ Engenharia e Indústria
+    'Engenharia & Indústria': ['engenharia', 'manutenção', 'industrial', 'eletrônica', 'civil', 'mecânica', 'produção', 'elétrica', 'mecatrônica', 'cad', 'cam', 'indústria 4.0', 'manufatura avançada'],
+    # 🏥 Saúde e Biológicas
+    'Saúde & Biológicas': ['saúde', 'clínica', 'hospital', 'paciente', 'tratamento', 'diagnóstico', 'enfermagem', 'medicina', 'terapia', 'farmácia', 'biomedicina', 'telemedicina', 'bioinformática'],
+    # 🗣️ Idiomas
+    'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim', 'japonês']
 }
 
 SOFTSKILLS_LISTA = ["Comunicação Eficaz", "Trabalho em Equipe", "Liderança", "Resolução de Problemas", "Pensamento Crítico", "Adaptabilidade", "Gestão de Tempo", "Inteligência Emocional", "Criatividade", "Negociação", "Mentoria", "Proatividade", "Visão de Negócio"]
