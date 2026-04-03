@@ -7,9 +7,10 @@ from datetime import datetime
 import plotly.express as px
 from typing import Dict, List, Tuple, Any, Optional
 import graphviz
+import json
 
 # ==============================================================================
-# 1. CONSTANTES E CONFIGURAÇÕES GERAIS
+# 1. CONSTANTES E CONFIGURAÇÕES GERAIS E GESTÃO DE ESTADO
 # ==============================================================================
 
 class UiConfig:
@@ -131,6 +132,19 @@ ABREVIACOES_LATTES = {
     "Dissertação de mestrado": "Dissertação Mestrado",
     "Tese de doutorado": "Tese Doutorado"
 }
+
+# --- TRACKING SYSTEM: VARIÁVEIS DE ESTADO (PARA BACKUP) ---
+KEYS_TO_TRACK = [
+    "humor_select", "vibe_select", "ano_base_input",
+    "ikigai_love", "ikigai_good_at", "ikigai_needs", "ikigai_paid_for", "resumo_ikigai",
+    "cv_vaga_text", "cv_template", "cv_headline", "cv_email", "cv_phone", 
+    "cv_linkedin", "cv_portfolio", "cv_resumo_final"
+]
+
+def exportar_estado() -> str:
+    """Extrai as configurações e progresso atuais do usuário em JSON."""
+    estado = {k: st.session_state[k] for k in KEYS_TO_TRACK if k in st.session_state}
+    return json.dumps(estado, indent=4, ensure_ascii=False)
 
 # ==============================================================================
 # 2. FUNÇÕES DE UX DINÂMICA E CORES
@@ -458,16 +472,30 @@ def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        love = st.text_area("1. O que você ama? (Paixão)", "Ex: Inovação, pesquisar IoT e mentorar pessoas.")
+        love = st.text_area("1. O que você ama? (Paixão)", placeholder="Ex: Inovação, pesquisar IoT e mentorar pessoas.", key="ikigai_love")
         skills_detected = df_skills['Competencia'].tolist() if not df_skills.empty else []
-        good_at = st.multiselect("2. No que você é bom? (Extraído das suas evidências)", options=list(set(SOFTSKILLS_LISTA + skills_detected)), default=skills_detected[:3] if skills_detected else None)
-        needs = st.text_input("3. O que o mundo precisa? (Missão)", "Ex: Transformação digital responsável.")
-        paid_for = st.text_input("4. Pelo que pode ser pago? (Vocação)", "Ex: Consultoria em TI, Docência.")
+        good_at_default = skills_detected[:3] if skills_detected else None
+        
+        if "ikigai_good_at" not in st.session_state:
+            st.session_state["ikigai_good_at"] = good_at_default if good_at_default else []
+            
+        good_at = st.multiselect(
+            "2. No que você é bom? (Extraído das suas evidências)", 
+            options=list(set(SOFTSKILLS_LISTA + skills_detected)), 
+            key="ikigai_good_at"
+        )
+        needs = st.text_input("3. O que o mundo precisa? (Missão)", placeholder="Ex: Transformação digital responsável.", key="ikigai_needs")
+        paid_for = st.text_input("4. Pelo que pode ser pago? (Vocação)", placeholder="Ex: Consultoria em TI, Docência.", key="ikigai_paid_for")
         
         if st.button("Gerar Resumo Ikigai", use_container_width=True):
             habilidades_str = ", ".join(good_at) if good_at else "minhas habilidades técnicas"
             resumo_gerado = f"Profissional apaixonado por {love.lower()}, com forte atuação em {habilidades_str}. Busco impactar a sociedade através da {needs.lower()}, atuando com {paid_for.lower()}."
             st.session_state['resumo_ikigai'] = resumo_gerado
+            
+            # Se já existir o estado do resumo final do CV, atualiza-o também
+            if "cv_resumo_final" in st.session_state:
+                st.session_state["cv_resumo_final"] = resumo_gerado
+                
             st.success("Resumo gerado com sucesso! Ele já foi enviado para o seu Gerador de Currículo na última etapa.")
             st.info(resumo_gerado)
 
@@ -660,7 +688,7 @@ def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
 
 def modulo_match_vagas() -> None:
     st.markdown("Analise se o seu perfil Lattes + Evidências Extras está aderente a uma vaga de mercado.")
-    vaga_text = st.text_area("Cole a descrição da vaga alvo (Job Description):", height=150)
+    vaga_text = st.text_area("Cole a descrição da vaga alvo (Job Description):", height=150, key="cv_vaga_text")
     if st.button("Analisar Aderência à Vaga"):
         if vaga_text:
             st.metric("Score de Aderência", "82%", "+15% (Bom fit)")
@@ -671,13 +699,9 @@ def modulo_match_vagas() -> None:
         else:
             st.warning("Cole o texto da vaga primeiro.")
 
-# ------------------------------------------------------------------------------
-# NOVO MÓDULO: GERADOR DE CURRÍCULO COM TEMPLATES MÚLTIPLOS E ADAPTATIVOS
-# ------------------------------------------------------------------------------
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
     st.markdown("> **Mentoria de Carreira:** A IAG organizará o seu currículo. Escolha a estrutura estratégica que melhor destaca o seu perfil para a vaga alvo e edite os dados em seguida.")
     
-    # Rádio UI Aprimorado para a Escolha do Template Estratégico
     st.markdown("### 🎯 Estratégia de Apresentação (Template)")
     template_opcoes = {
         "1. Cronológico Clássico": "Foco na progressão de carreira. Ideal para vagas tradicionais e RHs conservadores.",
@@ -691,7 +715,8 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
         "Selecione o formato que a IA usará para construir o documento:",
         list(template_opcoes.keys()),
         captions=list(template_opcoes.values()),
-        horizontal=False
+        horizontal=False,
+        key="cv_template"
     )
     st.divider()
     
@@ -700,16 +725,20 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     
     with tabs[0]:
         st.markdown("#### Informações de Contato")
-        role_target = st.text_input("Objetivo / Cargo Alvo (Headline)", placeholder="Ex: Analista de Dados Pleno")
+        role_target = st.text_input("Objetivo / Cargo Alvo (Headline)", placeholder="Ex: Analista de Dados Pleno", key="cv_headline")
         c_mail, c_phone = st.columns(2)
-        email = c_mail.text_input("E-mail", "seu.email@exemplo.com")
-        phone = c_phone.text_input("Telefone/WhatsApp", "(XX) 99999-9999")
+        email = c_mail.text_input("E-mail", "seu.email@exemplo.com", key="cv_email")
+        phone = c_phone.text_input("Telefone/WhatsApp", "(XX) 99999-9999", key="cv_phone")
         c_lnk, c_port = st.columns(2)
-        linkd = c_lnk.text_input("LinkedIn", "linkedin.com/in/voce")
-        portf = c_port.text_input("Portfólio / Github", "github.com/voce")
+        linkd = c_lnk.text_input("LinkedIn", "linkedin.com/in/voce", key="cv_linkedin")
+        portf = c_port.text_input("Portfólio / Github", "github.com/voce", key="cv_portfolio")
         st.divider()
+        
         resumo_padrao = st.session_state.get('resumo_ikigai', cad.get('RESUMO', ''))[:1000]
-        resumo_final = st.text_area("Texto do Resumo (Editável)", value=resumo_padrao, height=200)
+        if "cv_resumo_final" not in st.session_state:
+            st.session_state["cv_resumo_final"] = resumo_padrao
+        
+        resumo_final = st.text_area("Texto do Resumo (Editável)", height=200, key="cv_resumo_final")
 
     with tabs[1]:
         st.markdown("#### Experiência Profissional")
@@ -764,7 +793,6 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     st.divider()
     st.subheader("👁️ Visualização Final do Currículo")
     
-    # ---------------- LÓGICA DE GERAÇÃO DOS 5 TEMPLATES ----------------
     md = f"# {cad.get('NOME COMPLETO', 'Seu Nome Aqui')}\n"
     if role_target: md += f"### {role_target}\n"
     contacts = []
@@ -781,7 +809,6 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     md += "## 🎯 RESUMO PROFISSIONAL\n"
     md += f"{resumo_final}\n\n"
 
-    # Adaptação dos Títulos baseada no Template Estratégico
     titulo_exp = "💼 EXPERIÊNCIA PROFISSIONAL"
     titulo_proj = "🚀 PROJETOS RELEVANTES"
     titulo_edu = "🎓 FORMAÇÃO E EDUCAÇÃO"
@@ -798,7 +825,6 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
         titulo_exp = "📈 TRAJETÓRIA EXECUTIVA"
         titulo_skills = "🤝 COMPETÊNCIAS DE LIDERANÇA E GESTÃO"
 
-    # Funções de renderização de blocos
     def render_experiencia():
         b = ""
         if not selecoes['jobs'].empty:
@@ -838,7 +864,6 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
             b += "\n"
         return b
 
-    # Construção Dinâmica Final baseada na escolha do utilizador
     if "1." in template_escolhido:
         md += render_experiencia() + render_educacao() + render_projetos() + render_skills()
     elif "2." in template_escolhido:
@@ -898,7 +923,7 @@ def main() -> None:
             "🤩 Empolgado e criativo": "empolgado",
             "🧘 Zen, num ritmo calmo": "zen"
         }
-        humor_estado = opcoes_humor[st.selectbox("Como se sente hoje?", list(opcoes_humor.keys()))]
+        humor_estado = opcoes_humor[st.selectbox("Como se sente hoje?", list(opcoes_humor.keys()), key="humor_select")]
         st.session_state['humor_usuario'] = humor_estado
         
         opcoes_vibe = {
@@ -909,7 +934,7 @@ def main() -> None:
             "🤖 Tecnológico/Direto": "Tecnológico/Direto",
             "🧠 Mentor Filosófico": "Mentor Filosófico"
         }
-        vibe_estado = opcoes_vibe[st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()))]
+        vibe_estado = opcoes_vibe[st.selectbox("Personalidade da IA:", list(opcoes_vibe.keys()), key="vibe_select")]
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
@@ -924,10 +949,36 @@ def main() -> None:
         st.header(UiConfig.SIDEBAR_TITLE_3)
         st.caption("A base principal do seu perfil")
         arquivo = st.file_uploader("Carregar Lattes (XML/PDF)", type=['xml', 'pdf'])
-        ano_inicio = st.number_input("Ano Base (Filtro Gráficos)", min_value=1970, max_value=datetime.now().year + 1, value=2018)
+        ano_inicio = st.number_input("Ano Base (Filtro Gráficos)", min_value=1970, max_value=datetime.now().year + 1, value=2018, key="ano_base_input")
         
         st.caption("Evidências Extras")
         arquivos_adicionais = st.file_uploader("Certificados, Portfólio (PDF/Imagens)", accept_multiple_files=True)
+        
+        st.divider()
+        st.header("💾 Backup e Restauração")
+        st.caption("Exporte ou carregue as suas escolhas (JSON).")
+        
+        json_data = exportar_estado()
+        st.download_button(
+            label="📥 Descarregar Configurações",
+            data=json_data,
+            file_name="ueup_configuracoes.json",
+            mime="application/json",
+            use_container_width=True
+        )
+        
+        backup_file = st.file_uploader("Restaurar Configurações (JSON)", type=['json'], key="json_uploader")
+        if backup_file:
+            if st.session_state.get("last_uploaded_file") != backup_file.file_id:
+                try:
+                    data = json.load(backup_file)
+                    for k, v in data.items():
+                        if k in KEYS_TO_TRACK:
+                            st.session_state[k] = v
+                    st.session_state["last_uploaded_file"] = backup_file.file_id
+                    st.rerun()
+                except Exception as e:
+                    st.error("Erro ao restaurar o ficheiro JSON.")
 
     h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
     st.markdown(f"<div style='height: 5px; width: 100%; background-color: {h_color}; border-radius: 5px; margin-top: -15px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
