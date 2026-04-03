@@ -21,7 +21,7 @@ class UiConfig:
     PAGE_TITLE = "ueUP AI - Lattes & Carreira"
     PAGE_ICON = "🚀"
     LAYOUT = "wide"
-    HEADER_TITLE = "🚀 ueUP AI: Lattes Analytics, Ikigai & Trilha Dinâmica"
+    HEADER_TITLE = "🚀 ueUP AI: Career Analytics, Ikigai & Trilhas Dinâmicas"
     
     SIDEBAR_TITLE_1 = "1. Personalização da IA"
     SIDEBAR_TITLE_2 = "2. Navegação da Jornada"
@@ -29,7 +29,7 @@ class UiConfig:
     
     # Secções Macro (Roteamento)
     SEC_ONBOARDING = "🌟 Início: Autodescoberta (Ikigai)"
-    SEC_INGESTAO = "📥 Analytics & Perfil Lattes"
+    SEC_INGESTAO = "📥 Analytics & Perfil"
     SEC_TRILHA = "🗺️ Trilha Dinâmica (Modo Foco)"
     SEC_CV_GEN = "📄 Match de Vagas & Currículo"
 
