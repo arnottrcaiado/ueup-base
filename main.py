@@ -73,29 +73,17 @@ class PdfSections:
     }
 
 MAPA_COMPETENCIAS = {
-    # 💻 Desenvolvimento e Arquitetura de Software
     'Dev & Arquitetura': ['python', 'java', 'c#', 'c++', 'c', 'javascript', 'typescript', 'ruby', 'php', 'go', 'rust', 'swift', 'kotlin', 'arquitetura de software', 'solid', 'clean code', 'tdd', 'microsserviços', 'ddd', 'testes automatizados', 'poo', 'backend', 'api', 'rest', 'graphql', 'grpc'],
-    # 📱 Desenvolvimento Web e Mobile
     'Web & Mobile': ['html', 'css', 'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring', 'react native', 'flutter', 'ios', 'android', 'frontend', 'fullstack', 'ux', 'ui', 'figma', 'tailwind', 'bootstrap', 'web', 'mobile'],
-    # 🧠 Ciência de Dados e Inteligência Artificial
     'Dados & IA': ['dados', 'data science', 'data engineering', 'machine learning', 'deep learning', 'inteligência artificial', 'ia', 'ai', 'sql', 'nosql', 'pandas', 'numpy', 'scikit', 'tensorflow', 'keras', 'pytorch', 'nlp', 'visão computacional', 'big data', 'spark', 'hadoop', 'databricks', 'power bi', 'tableau', 'qlik', 'bi', 'business intelligence', 'etl', 'data warehouse', 'data lake', 'estatística', 'matemática', 'analytics'],
-    # ☁️ Infraestrutura, Cloud e DevOps
     'Infra, Cloud & DevOps': ['aws', 'azure', 'gcp', 'google cloud', 'cloud', 'nuvem', 'docker', 'kubernetes', 'ci/cd', 'jenkins', 'gitlab', 'github actions', 'terraform', 'ansible', 'linux', 'redes', 'servidores', 'bash', 'shell', 'devops', 'sre', 'infraestrutura', 'git', 'versionamento'],
-    # 🛡️ Segurança da Informação
     'Segurança & Compliance': ['segurança', 'cibersegurança', 'infosec', 'pentest', 'ethical hacking', 'criptografia', 'firewall', 'lgpd', 'gdpr', 'compliance', 'vulnerabilidades', 'soc', 'owasp', 'identidade', 'siem'],
-    # 🤖 IoT, Robótica e Cultura Maker
     'IoT, Hardware & Maker': ['iot', 'internet das coisas', 'arduino', 'raspberry pi', 'esp32', 'esp8266', 'robótica', 'maker', 'eletrônica', 'sensores', 'automação', 'sistemas embarcados', 'microcontroladores', 'hardware', 'impressão 3d', 'steam', 'sistemas ciberfísicos'],
-    # 💼 Gestão, Projetos e Negócios
     'Gestão & Negócios': ['gestão', 'liderança', 'coordenação', 'scrum', 'agile', 'projeto', 'planejamento', 'direção', 'negócios', 'marketing', 'estratégia', 'administração', 'pmbok', 'kanban', 'empreendedorismo', 'inovação', 'processos', 'produto', 'stakeholders', 'itil', 'cobit', 'product management', 'product owner', 'po', 'tech lead', 'governança', 'economia', 'finanças', 'roi'],
-    # 🎓 Mundo Acadêmico e Pesquisa
     'Acadêmico & Pesquisa': ['docência', 'pesquisa', 'ensino', 'metodologia', 'didática', 'pedagogia', 'orientação', 'banca', 'tcc', 'artigo', 'publicação', 'congresso', 'anais', 'científica', 'educação', 'avaliador', 'revisão', 'mestrado', 'doutorado', 'pós-doutorado', 'cnpq', 'capes', 'fapesp', 'extensão'],
-    # ⚙️ Engenharia e Indústria
     'Engenharia & Indústria': ['engenharia', 'manutenção', 'industrial', 'eletrônica', 'civil', 'mecânica', 'produção', 'elétrica', 'mecatrônica', 'cad', 'cam', 'indústria 4.0', 'manufatura avançada'],
-    # 🏥 Saúde e Biológicas
     'Saúde & Biológicas': ['saúde', 'clínica', 'hospital', 'paciente', 'tratamento', 'diagnóstico', 'enfermagem', 'medicina', 'terapia', 'farmácia', 'biomedicina', 'telemedicina', 'bioinformática'],
-    # 🗣️ Idiomas
     'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim', 'japonês'],
-    # 🤝 NOVA CATEGORIA: Mapeamento direto de Soft Skills nas entrelinhas
     'Soft Skills & Comportamental': ['comunicação', 'equipe', 'liderança', 'resolução de problemas', 'crítico', 'adaptabilidade', 'flexibilidade', 'tempo', 'emocional', 'criatividade', 'inovação', 'negociação', 'mentoria', 'proatividade', 'resiliência', 'empatia', 'colaboração', 'storytelling', 'decisão', 'soft skill', 'comportamental']
 }
 
@@ -145,11 +133,10 @@ ABREVIACOES_LATTES = {
 }
 
 # ==============================================================================
-# 2. FUNÇÕES DE UX DINÂMICA E CORES (AMPLIADAS E BLINDADAS 4.0)
+# 2. FUNÇÕES DE UX DINÂMICA E CORES
 # ==============================================================================
 
 def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
-    """CSS Blindado: Templates globais com 6 Vibes e 6 Humores."""
     temas = {
         "Profissional/Sério": {"primary": "#005bb5", "bg_side": "#0e1117", "bg_main": "#f4f6f9"},
         "Entusiasta/Motivacional": {"primary": "#d32f2f", "bg_side": "#1a0b0b", "bg_main": "#fff5f5"},
@@ -160,12 +147,8 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
     }
     
     humor_cores = {
-        "motivado": "#FFD700",       # Dourado
-        "reflexivo": "#00E5FF",      # Ciano
-        "sobrecarregado": "#FF5252", # Vermelho
-        "cansado": "#9E9E9E",        # Cinza
-        "empolgado": "#FF7F50",      # Laranja/Coral
-        "zen": "#20B2AA"             # Verde Água
+        "motivado": "#FFD700", "reflexivo": "#00E5FF", "sobrecarregado": "#FF5252",
+        "cansado": "#9E9E9E", "empolgado": "#FF7F50", "zen": "#20B2AA"
     }
     
     t = temas.get(vibe, temas["Profissional/Sério"])
@@ -173,45 +156,26 @@ def aplicar_estilo_dinamico(vibe: str, humor: str) -> str:
     
     st.markdown(f"""
         <style>
-        .stApp, [data-testid="stAppViewContainer"] {{
-            background-color: {t['bg_main']} !important;
-        }}
+        .stApp, [data-testid="stAppViewContainer"] {{ background-color: {t['bg_main']} !important; }}
         [data-testid="stSidebar"] > div:first-child, [data-testid="stSidebar"] {{ 
-            background-color: {t['bg_side']} !important; 
-            border-right: 4px solid {h_color} !important; 
+            background-color: {t['bg_side']} !important; border-right: 4px solid {h_color} !important; 
         }}
-        [data-testid="stSidebar"] p, 
-        [data-testid="stSidebar"] span, 
-        [data-testid="stSidebar"] label, 
-        [data-testid="stSidebar"] h1, 
-        [data-testid="stSidebar"] h2, 
-        [data-testid="stSidebar"] h3 {{ color: #ffffff !important; }}
+        [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label, 
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{ color: #ffffff !important; }}
         div[data-baseweb="select"] span {{ color: #1e1e1e !important; }}
-
-        /* FILE UPLOADER BLINDADO (Aplica-se a todos os Uploaders da tela) */
-        div[data-testid="stFileUploader"] section,
-        [data-testid="stFileUploadDropzone"] {{ 
-            background-color: #1e1e24 !important; 
-            border: 2px dashed {t['primary']} !important; 
-            border-radius: 8px !important; 
+        
+        div[data-testid="stFileUploader"] section, [data-testid="stFileUploadDropzone"] {{ 
+            background-color: #1e1e24 !important; border: 2px dashed {t['primary']} !important; border-radius: 8px !important; 
         }}
-        div[data-testid="stFileUploader"] section *,
-        [data-testid="stFileUploadDropzone"] * {{ color: #ffffff !important; }}
-        div[data-testid="stFileUploader"] button,
-        [data-testid="stFileUploadDropzone"] button {{ 
-            background-color: {t['primary']} !important; 
-            border: 1px solid {t['primary']} !important; 
+        div[data-testid="stFileUploader"] section *, [data-testid="stFileUploadDropzone"] * {{ color: #ffffff !important; }}
+        div[data-testid="stFileUploader"] button, [data-testid="stFileUploadDropzone"] button {{ 
+            background-color: {t['primary']} !important; border: 1px solid {t['primary']} !important; 
         }}
-        div[data-testid="stFileUploader"] button *,
-        [data-testid="stFileUploadDropzone"] button * {{ 
-            color: #ffffff !important; font-weight: 800 !important; 
-        }}
-        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"],
-        [data-testid="stUploadedFile"] {{ 
+        div[data-testid="stFileUploader"] button *, [data-testid="stFileUploadDropzone"] button * {{ color: #ffffff !important; font-weight: 800 !important; }}
+        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"], [data-testid="stUploadedFile"] {{ 
             background-color: #2b2b36 !important; border: 1px solid #444 !important; border-radius: 6px !important; 
         }}
-        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"] *,
-        [data-testid="stUploadedFile"] * {{ color: #ffffff !important; }}
+        div[data-testid="stFileUploader"] [data-testid="stUploadedFile"] *, [data-testid="stUploadedFile"] * {{ color: #ffffff !important; }}
 
         header[data-testid="stHeader"] {{ border-bottom: 4px solid {h_color} !important; background-color: transparent !important; }}
         .main h1, .main h2, .main h3, .main h4, .main h5 {{ color: {t['primary']} !important; }}
@@ -243,7 +207,7 @@ def formatar_label_visual(texto_original: str) -> str:
     return texto_curto.replace(" - ", " ").strip()
 
 # ==============================================================================
-# 3. PARSERS E MOTOR DE EXTRAÇÃO (LÓGICA INTACTA)
+# 3. PARSERS E MOTOR DE EXTRAÇÃO
 # ==============================================================================
 
 def extrair_cadastro(root: ET.Element) -> Dict[str, str]:
@@ -485,7 +449,7 @@ def carregar_dados_cacheado(arquivo_carregado: Any) -> Tuple[Optional[Dict[str, 
         return cad, df_form, df_compl, df_prod, df_comp, pd.DataFrame(), pd.DataFrame(), "PDF"
 
 # ==============================================================================
-# 4. MÓDULOS DE INTERFACE E VISUALIZAÇÃO (TELA A TELA)
+# 4. MÓDULOS DE INTERFACE E VISUALIZAÇÃO
 # ==============================================================================
 
 def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
@@ -607,9 +571,6 @@ def mostra_skills(df_comp: pd.DataFrame, st_obj: Any) -> None:
         fig_radar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st_obj.plotly_chart(fig_radar, use_container_width=True)
 
-# ------------------------------------------------------------------------------
-# NOVO MÓDULO: EXTRAÇÃO E INTERAÇÃO DE SOFT SKILLS
-# ------------------------------------------------------------------------------
 def modulo_soft_skills(df_skills: pd.DataFrame) -> None:
     st.subheader("🤝 Inteligência Comportamental (Soft Skills)")
     st.markdown("Habilidades do Século XXI extraídas das entrelinhas do seu perfil, com autoavaliação.")
@@ -624,43 +585,19 @@ def modulo_soft_skills(df_skills: pd.DataFrame) -> None:
     with c1:
         st.info(f"**Detectadas na Ingestão ({len(soft_extraidas)}):**")
         if soft_extraidas:
-            for s in soft_extraidas:
-                st.markdown(f"- ✅ {s}")
+            for s in soft_extraidas: st.markdown(f"- ✅ {s}")
         else:
-            st.write("Nenhuma soft skill foi explicitamente detectada no Lattes. Isto é muito comum em currículos técnicos e académicos focados apenas em fatos. Utilize a autoavaliação ao lado.")
+            st.write("Nenhuma soft skill foi explicitamente detectada. Isto é muito comum em currículos técnicos. Utilize a autoavaliação ao lado.")
 
     with c2:
         st.write("**Autoavaliação e Mapeamento Ativo**")
-        # Pré-seleciona as que foram detectadas pela IA, ou deixa em branco
         sugestao_default = [s for s in SOFTSKILLS_LISTA if any(ext.lower() in s.lower() for ext in soft_extraidas)]
-        
-        selecionadas = st.multiselect(
-            "Quais destas Soft Skills você realmente domina?",
-            options=SOFTSKILLS_LISTA,
-            default=sugestao_default if sugestao_default else ["Trabalho em Equipe", "Adaptabilidade e Flexibilidade"]
-        )
+        selecionadas = st.multiselect("Quais destas Soft Skills você realmente domina?", options=SOFTSKILLS_LISTA, default=sugestao_default if sugestao_default else ["Trabalho em Equipe", "Adaptabilidade e Flexibilidade"])
 
         if selecionadas:
             st.markdown("Avalie seu nível de domínio para destacar no currículo:")
-            # Criação de DataFrame interativo para avaliar as soft skills
-            df_edit_soft = pd.DataFrame({
-                "Soft Skill": selecionadas,
-                "Domínio (1-5)": [3] * len(selecionadas),
-                "Destacar no CV": [True] * len(selecionadas)
-            })
-            
-            st.data_editor(
-                df_edit_soft,
-                column_config={
-                    "Domínio (1-5)": st.column_config.NumberColumn(
-                        "Nível de Domínio", min_value=1, max_value=5, step=1, format="%d ⭐"
-                    ),
-                    "Destacar no CV": st.column_config.CheckboxColumn("Incluir no CV?")
-                },
-                hide_index=True,
-                use_container_width=True,
-                key="editor_soft_skills"
-            )
+            df_edit_soft = pd.DataFrame({"Soft Skill": selecionadas, "Domínio (1-5)": [3] * len(selecionadas), "Destacar no CV": [True] * len(selecionadas)})
+            st.data_editor(df_edit_soft, column_config={"Domínio (1-5)": st.column_config.NumberColumn("Nível de Domínio", min_value=1, max_value=5, step=1, format="%d ⭐"), "Destacar no CV": st.column_config.CheckboxColumn("Incluir no CV?")}, hide_index=True, use_container_width=True, key="editor_soft_skills")
 
 def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
     col_obj, col_foco = st.columns([3, 1])
@@ -672,21 +609,17 @@ def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
         with st.container(border=True):
             st.markdown("#### 🔵 NÓ ATUAL: Lógica de Extração com Python (30 min)")
             st.progress(0.2, "Micro-sprint em andamento...")
-            
             st.markdown("**Checklist do Sprint:**")
             st.checkbox("Ler documentação do BeautifulSoup")
             st.checkbox("Montar o primeiro script de parser")
             st.checkbox("Lidar com exceções (try/except)")
-            
             st.markdown("---")
             st.slider("Em uma escala de 1 a 5, qual o seu domínio atual neste tópico?", min_value=1, max_value=5, value=2, help="Isto ajudará a IAG a ajustar a complexidade da trilha.")
-            
             st.button("🚀 CONCLUIR MICRO-SPRINT", use_container_width=True, type="primary")
             
         st.markdown("- **Próximo Passo:** Persistência em Banco de Dados SQL (20 min)")
     else:
         st.progress(0.45, text="Progresso Consolidado da Trilha: 45% (Faltam ~4 semanas no ritmo atual)")
-        
         st.markdown("#### Seu Mapa de Jornada")
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -704,8 +637,7 @@ def modulo_trilha_dinamica(cad: Dict[str, str], vibe: str) -> None:
     st.subheader(f"💬 Mentor IAG ueUP")
     st.markdown("Relate sentimentos, dúvidas sobre a competência atual ou peça para pivotar sua carreira.")
     
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    if "messages" not in st.session_state: st.session_state.messages = []
     for message in st.session_state.messages:
         with st.chat_message(message["role"]): st.markdown(message["content"])
 
@@ -739,8 +671,23 @@ def modulo_match_vagas() -> None:
         else:
             st.warning("Cole o texto da vaga primeiro.")
 
+# ------------------------------------------------------------------------------
+# NOVO MÓDULO: GERADOR DE CURRÍCULO COM TEMPLATES MÚLTIPLOS
+# ------------------------------------------------------------------------------
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
-    st.markdown("> **Mentoria de Carreira:** A IAG gerará um currículo Markdown focado na vaga escolhida. Edite as seções brutas abaixo se necessário.")
+    st.markdown("> **Mentoria de Carreira:** A IAG gerará o seu currículo em Markdown. Selecione a estrutura estratégica que melhor combina com a vaga alvo e edite os blocos.")
+    
+    # Novo seletor de Templates (Apresentação Estratégica)
+    template_escolhido = st.selectbox(
+        "🎯 Escolha o Formato Estratégico do Currículo:",
+        [
+            "1. Cronológico Clássico (Formal, focado na progressão de carreira)",
+            "2. Funcional (Focado no topo nas Competências e Skills)",
+            "3. Moderno / Startup (Direto, focado no Tech Stack e Projetos)",
+            "4. Acadêmico / Pesquisa (Prioridade total para Educação e Projetos Científicos)",
+            "5. Executivo / Liderança (Foco absoluto no Resumo, Soft Skills e Impacto)"
+        ]
+    )
     
     selecoes = {'form': pd.DataFrame(), 'compl': pd.DataFrame(), 'tech': [], 'soft': [], 'lang': [], 'jobs': pd.DataFrame(), 'projs': pd.DataFrame()}
     tabs = st.tabs(["1. Cabeçalho & Resumo", "2. Experiência", "3. Projetos", "4. Skills & Idiomas", "5. Educação"])
@@ -784,7 +731,7 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
             st.markdown("**Hard Skills (Técnicas)**")
             if not df_skills.empty:
                 todas = sorted(df_skills['Competencia'].unique().tolist())
-                sugestao = [x for x in todas if classificar_competencia(x) in ['Tecnologia', 'Gestão', 'Dados & IA', 'Dev & Arquitetura']]
+                sugestao = [x for x in todas if classificar_competencia(x) in ['Dev & Arquitetura', 'Web & Mobile', 'Dados & IA', 'Infra, Cloud & DevOps', 'Segurança & Compliance']]
                 selecoes['tech'] = st.multiselect("Selecione Techs:", options=todas, default=sugestao[:12])
             else: st.warning("Nenhuma skill detectada.")
         with c_soft:
@@ -810,6 +757,8 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
 
     st.divider()
     st.subheader("👁️ Visualização Final do Currículo")
+    
+    # ---------------- LÓGICA DE GERAÇÃO DOS 5 TEMPLATES ----------------
     md = f"# {cad.get('NOME COMPLETO', 'Seu Nome Aqui')}\n"
     if role_target: md += f"### {role_target}\n"
     contacts = []
@@ -822,41 +771,81 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     if linkd: links.append(f"[LinkedIn]({linkd})")
     if portf: links.append(f"[Portfólio]({portf})")
     if links: md += "🔗 " + " | ".join(links) + "\n\n"
+    
     md += "## 🎯 RESUMO PROFISSIONAL\n"
     md += f"{resumo_final}\n\n"
     
-    if selecoes['tech'] or selecoes['soft'] or selecoes['lang']:
-        md += "## 🛠️ COMPETÊNCIAS\n"
-        if selecoes['tech']: md += f"- **Tecnologias:** {', '.join(selecoes['tech'])}\n"
-        if selecoes['lang']: md += f"- **Idiomas:** {', '.join(selecoes['lang'])}\n"
-        if selecoes['soft']: md += f"- **Comportamentais:** {', '.join(selecoes['soft'])}\n"
-        md += "\n"
-        
-    if not selecoes['jobs'].empty:
-        md += "## 💼 EXPERIÊNCIA PROFISSIONAL\n"
-        for _, r in selecoes['jobs'].iterrows():
-            md += f"### {r['Cargo']} | **{r['Empresa']}**\n📅 *{r['Periodo']}*\n\n{str(r['Descrição (Editável)']).replace(chr(10), chr(10)+chr(10))}\n\n"
-    
-    if not selecoes['projs'].empty:
-        md += "## 🚀 PROJETOS RELEVANTES\n"
-        for _, r in selecoes['projs'].iterrows():
-            md += f"### {r['Nome']}\n*{r['Ano']}*\n\n{r['Descrição (Editável)']}\n\n"
-    
-    md += "## 🎓 FORMAÇÃO\n"
-    if not selecoes['form'].empty:
-        for _, r in selecoes['form'].iterrows(): md += f"- **{r['Curso']}** ({r['Nível']})\n  *{r['Instituição']}* | {r['Conclusão']}\n"
-    if not selecoes['compl'].empty:
-        md += "\n**Certificações e Cursos:**\n"
-        for _, r in selecoes['compl'].iterrows():
-            carga = f" ({r['Carga Horária']})" if r['Carga Horária'] else ""
-            md += f"- **{r['Curso']}**\n  {r['Instituição']} | {r['Conclusão']}{carga}\n"
+    # Funções auxiliares para renderizar blocos e evitar repetição de código
+    def render_experiencia():
+        b = ""
+        if not selecoes['jobs'].empty:
+            b += "## 💼 EXPERIÊNCIA PROFISSIONAL\n"
+            for _, r in selecoes['jobs'].iterrows():
+                b += f"### {r['Cargo']} | **{r['Empresa']}**\n📅 *{r['Periodo']}*\n\n{str(r['Descrição (Editável)']).replace(chr(10), chr(10)+chr(10))}\n\n"
+        return b
+
+    def render_projetos():
+        b = ""
+        if not selecoes['projs'].empty:
+            b += "## 🚀 PROJETOS RELEVANTES\n"
+            for _, r in selecoes['projs'].iterrows():
+                b += f"### {r['Nome']}\n*{r['Ano']}*\n\n{r['Descrição (Editável)']}\n\n"
+        return b
+
+    def render_educacao():
+        b = ""
+        if not selecoes['form'].empty or not selecoes['compl'].empty:
+            b += "## 🎓 FORMAÇÃO E EDUCAÇÃO\n"
+            for _, r in selecoes['form'].iterrows(): b += f"- **{r['Curso']}** ({r['Nível']})\n  *{r['Instituição']}* | {r['Conclusão']}\n"
+            if not selecoes['compl'].empty:
+                b += "\n**Certificações e Cursos:**\n"
+                for _, r in selecoes['compl'].iterrows():
+                    carga = f" ({r['Carga Horária']})" if r['Carga Horária'] else ""
+                    b += f"- **{r['Curso']}**\n  {r['Instituição']} | {r['Conclusão']}{carga}\n"
+            b += "\n"
+        return b
+
+    def render_skills():
+        b = ""
+        if selecoes['tech'] or selecoes['soft'] or selecoes['lang']:
+            b += "## 🛠️ COMPETÊNCIAS E IDIOMAS\n"
+            if selecoes['tech']: b += f"- **Tecnologias (Hard Skills):** {', '.join(selecoes['tech'])}\n"
+            if selecoes['soft']: b += f"- **Comportamentais (Soft Skills):** {', '.join(selecoes['soft'])}\n"
+            if selecoes['lang']: b += f"- **Idiomas:** {', '.join(selecoes['lang'])}\n"
+            b += "\n"
+        return b
+
+    # Construção Dinâmica baseada na escolha do utilizador
+    if "1." in template_escolhido:
+        # Cronológico Clássico
+        md += render_experiencia() + render_educacao() + render_projetos() + render_skills()
+    elif "2." in template_escolhido:
+        # Funcional
+        md += render_skills() + render_projetos() + render_experiencia() + render_educacao()
+    elif "3." in template_escolhido:
+        # Moderno / Startup
+        md += render_skills() + render_experiencia() + render_projetos() + render_educacao()
+    elif "4." in template_escolhido:
+        # Acadêmico / Pesquisa
+        md += render_educacao() + render_projetos() + render_experiencia() + render_skills()
+    elif "5." in template_escolhido:
+        # Executivo / Liderança
+        # Coloca soft skills diretamente após o resumo para impacto executivo
+        if selecoes['soft']:
+            md += f"## 🤝 LIDERANÇA E PERFIL COMPORTAMENTAL\n{', '.join(selecoes['soft'])}\n\n"
+        md += render_experiencia()
+        if selecoes['tech'] or selecoes['lang']:
+            md += "## 🛠️ OUTRAS COMPETÊNCIAS E IDIOMAS\n"
+            if selecoes['tech']: md += f"- **Conhecimentos Técnicos:** {', '.join(selecoes['tech'])}\n"
+            if selecoes['lang']: md += f"- **Idiomas:** {', '.join(selecoes['lang'])}\n\n"
+        md += render_educacao() + render_projetos()
 
     st.text_area("Código Markdown Bruto (ATS Friendly):", value=md, height=300)
     col_dwn, col_info = st.columns([1, 4])
     with col_dwn:
         st.download_button(label="📥 Baixar CV (.md)", data=md, file_name="cv_ueup.md", mime="text/markdown", use_container_width=True)
     with col_info:
-        st.info("Utilize este arquivo `.md` em conversores ATS ou ferramentas como o Obsidian.")
+        st.info("Utilize este ficheiro `.md` em conversores para PDF (como o Obsidian ou ferramentas ATS). A sua formatação adapta-se à estratégia que escolheu.")
 
 # ==============================================================================
 # 6. ORQUESTRADOR PRINCIPAL (MAIN E ROTEAMENTO MESTRE)
@@ -921,11 +910,9 @@ def main() -> None:
         st.caption("Evidências Extras")
         arquivos_adicionais = st.file_uploader("Certificados, Portfólio (PDF/Imagens)", accept_multiple_files=True)
 
-    # Injeção Global de CSS e Cor da Barra de Energia
     h_color = aplicar_estilo_dinamico(vibe_estado, humor_estado)
     st.markdown(f"<div style='height: 5px; width: 100%; background-color: {h_color}; border-radius: 5px; margin-top: -15px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
 
-    # Processamento de Dados Lattes
     cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos = {}, pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     
     if arquivo:
@@ -935,10 +922,6 @@ def main() -> None:
                 st.error(dados[-1])
                 st.stop()
             cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos, msg = dados
-
-    # ==========================================================================
-    # ROTEAMENTO E RENDERIZAÇÃO DOS MÓDULOS 
-    # ==========================================================================
 
     if menu == UiConfig.SEC_ONBOARDING:
         modulo_ikigai_onboarding(df_skills)
@@ -953,12 +936,9 @@ def main() -> None:
             st.subheader(f"🎓 Formação Extraída")
             modulo_formacao(df_form, df_compl)
             st.divider()
-            
-            # --- Hard Skills e Soft Skills agrupadas na mesma etapa de Ingestão ---
             mostra_skills(df_skills, st)
             st.divider()
             modulo_soft_skills(df_skills)
-            
             st.divider()
             with st.expander("Ver Tabela Completa de Produção Lattes"):
                 st.dataframe(df_prod, use_container_width=True)
