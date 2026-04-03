@@ -102,7 +102,34 @@ MAPA_COMPETENCIAS = {
     'Idiomas': ['inglês', 'espanhol', 'francês', 'alemão', 'italiano', 'mandarim', 'japonês']
 }
 
-SOFTSKILLS_LISTA = ["Comunicação Eficaz", "Trabalho em Equipe", "Liderança", "Resolução de Problemas", "Pensamento Crítico", "Adaptabilidade", "Gestão de Tempo", "Inteligência Emocional", "Criatividade", "Negociação", "Mentoria", "Proatividade", "Visão de Negócio"]
+SOFTSKILLS_LISTA = [
+    "Adaptabilidade e Flexibilidade",
+    "Agilidade de Aprendizado (Learnability)",
+    "Aprendizado Contínuo (Lifelong Learning)",
+    "Autogestão e Autonomia",
+    "Colaboração Intercultural e Remota",
+    "Comunicação Assíncrona",
+    "Comunicação Eficaz",
+    "Criatividade e Inovação",
+    "Design Thinking (Foco no Usuário)",
+    "Empatia e Escuta Ativa",
+    "Ética Digital e Consciência de Dados",
+    "Gestão da Ambiguidade e Incerteza",
+    "Gestão de Tempo e Priorização",
+    "Inteligência Emocional",
+    "Liderança e Influência",
+    "Mentoria e Facilitação",
+    "Negociação",
+    "Pensamento Crítico e Analítico",
+    "Pensamento Sistêmico",
+    "Proatividade e Iniciativa",
+    "Resiliência e Tolerância ao Estresse",
+    "Resolução de Problemas Complexos",
+    "Storytelling (Comunicação de Dados)",
+    "Tomada de Decisão",
+    "Trabalho em Equipe",
+    "Visão de Negócio (Business Acumen)"
+]
 
 ABREVIACOES_LATTES = {
     "Monografia de conclusão de curso de aperfeiçoamento/especialização": "Monografia Especialização",
