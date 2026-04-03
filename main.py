@@ -24,9 +24,9 @@ class UiConfig:
     SIDEBAR_TITLE_3 = "3. Ingestão Multimodal"
     
     # Secções Macro (Roteamento)
-    SEC_ONBOARDING = "🌟 Início: Autodescoberta (Ikigai)"
-    SEC_INGESTAO = "📥 Analytics & Perfil"
-    SEC_TRILHA = "🗺️ Trilha Dinâmica (Modo Foco)"
+    SEC_ONBOARDING = "🌟 Autodescoberta (Ikigai)"
+    SEC_INGESTAO = "📥 Analytics & Perfil Lattes"
+    SEC_TRILHA = "🗺️ Trilha Dinâmica"
     SEC_CV_GEN = "📄 Match de Vagas & Currículo"
 
 class XmlTags:
@@ -133,9 +133,10 @@ ABREVIACOES_LATTES = {
     "Tese de doutorado": "Tese Doutorado"
 }
 
-# --- TRACKING SYSTEM: VARIÁVEIS DE ESTADO (PARA BACKUP) ---
+# --- TRACKING SYSTEM: VARIÁVEIS DE ESTADO ---
 KEYS_TO_TRACK = [
     "humor_select", "vibe_select", "ano_base_input",
+    "nav_mode", "nav_radio", "show_onboarding", "show_ingestao", "show_trilha", "show_cv_gen",
     "ikigai_love", "ikigai_good_at", "ikigai_needs", "ikigai_paid_for", "resumo_ikigai",
     "cv_vaga_text", "cv_template", "cv_headline", "cv_email", "cv_phone", 
     "cv_linkedin", "cv_portfolio", "cv_resumo_final"
@@ -492,7 +493,6 @@ def modulo_ikigai_onboarding(df_skills: pd.DataFrame) -> None:
             resumo_gerado = f"Profissional apaixonado por {love.lower()}, com forte atuação em {habilidades_str}. Busco impactar a sociedade através da {needs.lower()}, atuando com {paid_for.lower()}."
             st.session_state['resumo_ikigai'] = resumo_gerado
             
-            # Se já existir o estado do resumo final do CV, atualiza-o também
             if "cv_resumo_final" in st.session_state:
                 st.session_state["cv_resumo_final"] = resumo_gerado
                 
@@ -938,12 +938,34 @@ def main() -> None:
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_2)
-        menu = st.radio("Jornada ueUP", [
-            UiConfig.SEC_ONBOARDING,
-            UiConfig.SEC_INGESTAO,
-            UiConfig.SEC_TRILHA,
-            UiConfig.SEC_CV_GEN
-        ])
+        
+        # --- NOVO: TOGGLE DE MODO DE NAVEGAÇÃO ---
+        modo_navegacao = st.radio(
+            "Modo de Exibição:", 
+            ["Foco (Uma tela)", "Dashboard (Múltiplas telas)"],
+            horizontal=True,
+            key="nav_mode"
+        )
+        
+        show_onboarding, show_ingestao, show_trilha, show_cv_gen = False, False, False, False
+        
+        if modo_navegacao == "Foco (Uma tela)":
+            menu = st.radio("Selecione o painel ativo:", [
+                UiConfig.SEC_ONBOARDING,
+                UiConfig.SEC_INGESTAO,
+                UiConfig.SEC_TRILHA,
+                UiConfig.SEC_CV_GEN
+            ], key="nav_radio")
+            if menu == UiConfig.SEC_ONBOARDING: show_onboarding = True
+            elif menu == UiConfig.SEC_INGESTAO: show_ingestao = True
+            elif menu == UiConfig.SEC_TRILHA: show_trilha = True
+            elif menu == UiConfig.SEC_CV_GEN: show_cv_gen = True
+        else:
+            st.caption("Selecione os painéis para visualizar simultaneamente.")
+            show_onboarding = st.checkbox(UiConfig.SEC_ONBOARDING, value=True, key="show_onboarding")
+            show_ingestao = st.checkbox(UiConfig.SEC_INGESTAO, value=False, key="show_ingestao")
+            show_trilha = st.checkbox(UiConfig.SEC_TRILHA, value=False, key="show_trilha")
+            show_cv_gen = st.checkbox(UiConfig.SEC_CV_GEN, value=False, key="show_cv_gen")
         
         st.divider()
         st.header(UiConfig.SIDEBAR_TITLE_3)
@@ -993,10 +1015,15 @@ def main() -> None:
                 st.stop()
             cad, df_form, df_compl, df_prod, df_skills, df_atuacao, df_projetos, msg = dados
 
-    if menu == UiConfig.SEC_ONBOARDING:
-        modulo_ikigai_onboarding(df_skills)
+    # ==========================================================================
+    # RENDERIZAÇÃO ADAPTATIVA (FOCO OU DASHBOARD)
+    # ==========================================================================
 
-    elif menu == UiConfig.SEC_INGESTAO:
+    if show_onboarding:
+        modulo_ikigai_onboarding(df_skills)
+        if modo_navegacao == "Dashboard (Múltiplas telas)": st.divider()
+
+    if show_ingestao:
         st.subheader(f"📊 {UiConfig.SEC_INGESTAO}")
         if arquivo and cad:
             modulo_ficha_cadastral(cad, arquivos_adicionais)
@@ -1014,18 +1041,20 @@ def main() -> None:
                 st.dataframe(df_prod, use_container_width=True)
         else:
             st.info("👈 Faça a ingestão (Upload) do seu Currículo Lattes na barra lateral para habilitar a inteligência de dados analítica.")
+        if modo_navegacao == "Dashboard (Múltiplas telas)": st.divider()
 
-    elif menu == UiConfig.SEC_TRILHA:
+    if show_trilha:
         modulo_trilha_dinamica(cad, vibe_estado)
+        if modo_navegacao == "Dashboard (Múltiplas telas)": st.divider()
 
-    elif menu == UiConfig.SEC_CV_GEN:
+    if show_cv_gen:
         st.subheader(f"💼 {UiConfig.SEC_CV_GEN}")
         if arquivo and cad:
             modulo_match_vagas()
             st.divider()
             gerar_curriculo_base(cad, df_form, df_compl, df_atuacao, df_projetos, df_skills)
         else:
-            st.warning("👈 A Inteligência do Gerador de Currículos e Match de Vagas exige que seu perfil base esteja carregado no painel à esquerda.")
+            st.warning("👈 A Inteligência do Gerador de Currículos e Match de Vagas exige que o seu perfil base esteja carregado no painel à esquerda.")
 
 if __name__ == "__main__":
     main()
