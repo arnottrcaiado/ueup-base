@@ -672,22 +672,28 @@ def modulo_match_vagas() -> None:
             st.warning("Cole o texto da vaga primeiro.")
 
 # ------------------------------------------------------------------------------
-# NOVO MÓDULO: GERADOR DE CURRÍCULO COM TEMPLATES MÚLTIPLOS
+# NOVO MÓDULO: GERADOR DE CURRÍCULO COM TEMPLATES MÚLTIPLOS E ADAPTATIVOS
 # ------------------------------------------------------------------------------
 def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: pd.DataFrame, df_atuacao: pd.DataFrame, df_projetos: pd.DataFrame, df_skills: pd.DataFrame) -> None:
-    st.markdown("> **Mentoria de Carreira:** A IAG gerará o seu currículo em Markdown. Selecione a estrutura estratégica que melhor combina com a vaga alvo e edite os blocos.")
+    st.markdown("> **Mentoria de Carreira:** A IAG organizará o seu currículo. Escolha a estrutura estratégica que melhor destaca o seu perfil para a vaga alvo e edite os dados em seguida.")
     
-    # Novo seletor de Templates (Apresentação Estratégica)
-    template_escolhido = st.selectbox(
-        "🎯 Escolha o Formato Estratégico do Currículo:",
-        [
-            "1. Cronológico Clássico (Formal, focado na progressão de carreira)",
-            "2. Funcional (Focado no topo nas Competências e Skills)",
-            "3. Moderno / Startup (Direto, focado no Tech Stack e Projetos)",
-            "4. Acadêmico / Pesquisa (Prioridade total para Educação e Projetos Científicos)",
-            "5. Executivo / Liderança (Foco absoluto no Resumo, Soft Skills e Impacto)"
-        ]
+    # Rádio UI Aprimorado para a Escolha do Template Estratégico
+    st.markdown("### 🎯 Estratégia de Apresentação (Template)")
+    template_opcoes = {
+        "1. Cronológico Clássico": "Foco na progressão de carreira. Ideal para vagas tradicionais e RHs conservadores.",
+        "2. Funcional (Focado em Competências)": "Destaca Hard e Soft Skills logo no topo. Excelente para transição de carreira.",
+        "3. Moderno / Startup": "Direto ao ponto. Focado no seu Tech Stack e projetos de impacto tecnológico rápido.",
+        "4. Acadêmico / Pesquisa": "Prioridade total para sua Educação, titulações, publicações e projetos científicos.",
+        "5. Executivo / Liderança": "Foco absoluto no Resumo de impacto, Soft Skills de gestão e trajetória de longa duração."
+    }
+    
+    template_escolhido = st.radio(
+        "Selecione o formato que a IA usará para construir o documento:",
+        list(template_opcoes.keys()),
+        captions=list(template_opcoes.values()),
+        horizontal=False
     )
+    st.divider()
     
     selecoes = {'form': pd.DataFrame(), 'compl': pd.DataFrame(), 'tech': [], 'soft': [], 'lang': [], 'jobs': pd.DataFrame(), 'projs': pd.DataFrame()}
     tabs = st.tabs(["1. Cabeçalho & Resumo", "2. Experiência", "3. Projetos", "4. Skills & Idiomas", "5. Educação"])
@@ -774,12 +780,29 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     
     md += "## 🎯 RESUMO PROFISSIONAL\n"
     md += f"{resumo_final}\n\n"
+
+    # Adaptação dos Títulos baseada no Template Estratégico
+    titulo_exp = "💼 EXPERIÊNCIA PROFISSIONAL"
+    titulo_proj = "🚀 PROJETOS RELEVANTES"
+    titulo_edu = "🎓 FORMAÇÃO E EDUCAÇÃO"
+    titulo_skills = "🛠️ COMPETÊNCIAS E IDIOMAS"
     
-    # Funções auxiliares para renderizar blocos e evitar repetição de código
+    if "Moderno / Startup" in template_escolhido:
+        titulo_skills = "💻 TECH STACK & FERRAMENTAS"
+        titulo_proj = "⚡ PROJETOS DE IMPACTO"
+    elif "Acadêmico / Pesquisa" in template_escolhido:
+        titulo_exp = "🏛️ ATUAÇÃO PROFISSIONAL E ACADÊMICA"
+        titulo_proj = "🔬 PROJETOS DE PESQUISA E EXTENSÃO"
+        titulo_edu = "🎓 TITULAÇÃO E FORMAÇÃO ACADÊMICA"
+    elif "Executivo / Liderança" in template_escolhido:
+        titulo_exp = "📈 TRAJETÓRIA EXECUTIVA"
+        titulo_skills = "🤝 COMPETÊNCIAS DE LIDERANÇA E GESTÃO"
+
+    # Funções de renderização de blocos
     def render_experiencia():
         b = ""
         if not selecoes['jobs'].empty:
-            b += "## 💼 EXPERIÊNCIA PROFISSIONAL\n"
+            b += f"## {titulo_exp}\n"
             for _, r in selecoes['jobs'].iterrows():
                 b += f"### {r['Cargo']} | **{r['Empresa']}**\n📅 *{r['Periodo']}*\n\n{str(r['Descrição (Editável)']).replace(chr(10), chr(10)+chr(10))}\n\n"
         return b
@@ -787,7 +810,7 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     def render_projetos():
         b = ""
         if not selecoes['projs'].empty:
-            b += "## 🚀 PROJETOS RELEVANTES\n"
+            b += f"## {titulo_proj}\n"
             for _, r in selecoes['projs'].iterrows():
                 b += f"### {r['Nome']}\n*{r['Ano']}*\n\n{r['Descrição (Editável)']}\n\n"
         return b
@@ -795,10 +818,10 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     def render_educacao():
         b = ""
         if not selecoes['form'].empty or not selecoes['compl'].empty:
-            b += "## 🎓 FORMAÇÃO E EDUCAÇÃO\n"
+            b += f"## {titulo_edu}\n"
             for _, r in selecoes['form'].iterrows(): b += f"- **{r['Curso']}** ({r['Nível']})\n  *{r['Instituição']}* | {r['Conclusão']}\n"
             if not selecoes['compl'].empty:
-                b += "\n**Certificações e Cursos:**\n"
+                b += "\n**Certificações e Cursos Extras:**\n"
                 for _, r in selecoes['compl'].iterrows():
                     carga = f" ({r['Carga Horária']})" if r['Carga Horária'] else ""
                     b += f"- **{r['Curso']}**\n  {r['Instituição']} | {r['Conclusão']}{carga}\n"
@@ -808,31 +831,25 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
     def render_skills():
         b = ""
         if selecoes['tech'] or selecoes['soft'] or selecoes['lang']:
-            b += "## 🛠️ COMPETÊNCIAS E IDIOMAS\n"
-            if selecoes['tech']: b += f"- **Tecnologias (Hard Skills):** {', '.join(selecoes['tech'])}\n"
-            if selecoes['soft']: b += f"- **Comportamentais (Soft Skills):** {', '.join(selecoes['soft'])}\n"
+            b += f"## {titulo_skills}\n"
+            if selecoes['tech']: b += f"- **Hard Skills:** {', '.join(selecoes['tech'])}\n"
+            if selecoes['soft']: b += f"- **Soft Skills:** {', '.join(selecoes['soft'])}\n"
             if selecoes['lang']: b += f"- **Idiomas:** {', '.join(selecoes['lang'])}\n"
             b += "\n"
         return b
 
-    # Construção Dinâmica baseada na escolha do utilizador
+    # Construção Dinâmica Final baseada na escolha do utilizador
     if "1." in template_escolhido:
-        # Cronológico Clássico
         md += render_experiencia() + render_educacao() + render_projetos() + render_skills()
     elif "2." in template_escolhido:
-        # Funcional
         md += render_skills() + render_projetos() + render_experiencia() + render_educacao()
     elif "3." in template_escolhido:
-        # Moderno / Startup
         md += render_skills() + render_experiencia() + render_projetos() + render_educacao()
     elif "4." in template_escolhido:
-        # Acadêmico / Pesquisa
         md += render_educacao() + render_projetos() + render_experiencia() + render_skills()
     elif "5." in template_escolhido:
-        # Executivo / Liderança
-        # Coloca soft skills diretamente após o resumo para impacto executivo
         if selecoes['soft']:
-            md += f"## 🤝 LIDERANÇA E PERFIL COMPORTAMENTAL\n{', '.join(selecoes['soft'])}\n\n"
+            md += f"## 🤝 DESTAQUES DE LIDERANÇA\n{', '.join(selecoes['soft'])}\n\n"
         md += render_experiencia()
         if selecoes['tech'] or selecoes['lang']:
             md += "## 🛠️ OUTRAS COMPETÊNCIAS E IDIOMAS\n"
@@ -840,12 +857,14 @@ def gerar_curriculo_base(cad: Dict[str, str], df_form: pd.DataFrame, df_compl: p
             if selecoes['lang']: md += f"- **Idiomas:** {', '.join(selecoes['lang'])}\n\n"
         md += render_educacao() + render_projetos()
 
-    st.text_area("Código Markdown Bruto (ATS Friendly):", value=md, height=300)
+    st.text_area("Código Markdown Bruto (A estrutura altera dinamicamente com o Template):", value=md, height=300)
+    st.info(f"💡 **Modelo Atual:** A formatação da caixa acima foi construída e estruturada usando o padrão **{template_escolhido.split('.')[1].strip()}**.")
+    
     col_dwn, col_info = st.columns([1, 4])
     with col_dwn:
         st.download_button(label="📥 Baixar CV (.md)", data=md, file_name="cv_ueup.md", mime="text/markdown", use_container_width=True)
     with col_info:
-        st.info("Utilize este ficheiro `.md` em conversores para PDF (como o Obsidian ou ferramentas ATS). A sua formatação adapta-se à estratégia que escolheu.")
+        st.caption("Pode utilizar o ficheiro gerado em conversores PDF, no Obsidian ou plataformas ATS para se candidatar à vaga.")
 
 # ==============================================================================
 # 6. ORQUESTRADOR PRINCIPAL (MAIN E ROTEAMENTO MESTRE)
